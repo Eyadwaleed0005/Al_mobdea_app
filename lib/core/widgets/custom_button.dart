@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
-    required this.text,
+    this.text,
     this.onPressed,
     this.isLoading = false,
     this.width,
@@ -19,9 +19,14 @@ class CustomButton extends StatelessWidget {
     this.background,
     this.borderColor,
     this.borderWidth,
+    this.borderRadius,
+    this.textStyle,
+    this.child,
+    this.padding,
+    this.elevation,
   });
 
-  final String text;
+  final String? text;
   final VoidCallback? onPressed;
   final bool isLoading;
   final double? width;
@@ -32,6 +37,11 @@ class CustomButton extends StatelessWidget {
   final Color? background;
   final Color? borderColor;
   final double? borderWidth;
+  final double? borderRadius;
+  final TextStyle? textStyle;
+  final Widget? child;
+  final EdgeInsetsGeometry? padding;
+  final double? elevation;
 
   @override
   Widget build(BuildContext context) {
@@ -41,19 +51,20 @@ class CustomButton extends StatelessWidget {
 
     return SizedBox(
       width: width ?? double.infinity,
-      height: height ?? 52.h,
+      height: height ?? 50.h,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
+          padding: padding ?? EdgeInsets.symmetric(horizontal: 16.w),
           backgroundColor: buttonBackground,
           disabledBackgroundColor: isLoading
               ? buttonBackground
               : ColorPalette.disabled,
           foregroundColor: buttonForeground,
           disabledForegroundColor: buttonForeground,
-          elevation: 0,
+          elevation: elevation ?? 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14.r),
+            borderRadius: BorderRadius.circular((borderRadius ?? 21).r),
             side: borderColor != null
                 ? BorderSide(color: borderColor!, width: borderWidth ?? 1.5.w)
                 : BorderSide.none,
@@ -67,20 +78,26 @@ class CustomButton extends StatelessWidget {
                 wavelength: 12,
                 waveSpeed: 10,
               )
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (prefixIcon != null) ...[prefixIcon!, horizontalSpace(8)],
-                  Text(
-                    text,
-                    style: AppTextStyle.font15TextLightBoldTajawal().copyWith(
-                      color: buttonForeground,
-                    ),
+            : child ??
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (prefixIcon != null) ...[prefixIcon!, horizontalSpace(8)],
+                      Flexible(
+                        child: Text(
+                          text ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: (textStyle ?? AppTextStyle.font15TextLightBoldTajawal()).copyWith(
+                            color: buttonForeground,
+                          ),
+                        ),
+                      ),
+                      if (suffixIcon != null) ...[horizontalSpace(8), suffixIcon!],
+                    ],
                   ),
-                  if (suffixIcon != null) ...[horizontalSpace(8), suffixIcon!],
-                ],
-              ),
       ),
     );
   }

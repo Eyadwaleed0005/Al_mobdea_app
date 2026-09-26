@@ -1,76 +1,93 @@
 import 'package:flutter/material.dart';
 
 class ColorPalette {
-  // Primary: Deep Crimson/Maroon
-  static const Color crimsonDeep = Color(0xFF6B0F2A);
-  static const Color crimsonDark = Color(0xFF4A0A1C);
-  static const Color crimsonHover = Color(0xFF8B1535);
-  static const Color palePink = Color(0xFFFFF0F3);
-  static const Color softRose = Color(0xFFF2C4CC);
-  static const Color paleRose = Color(0xFFFAE4E8);
+  const ColorPalette._();
 
-  // Accent / Gold highlight
-  static const Color goldHighlight = Color(0xFFC89B3C);
-  static const Color goldLight = Color(0xFFE8C97A);
-  static const Color goldPale = Color(0xFFFDF3DC);
+  // Wine
+  static const Color wine50 = Color(0xFFFBF2F3);
+  static const Color wine100 = Color(0xFFE5B8C1);
+  static const Color wine200 = Color(0xFFAE5068);
+  static const Color wine300 = Color(0xFF8A1737);
+  static const Color wine400 = Color(0xFF760A29);
+  static const Color wine500 = Color(0xFF64051F);
+  static const Color wine600 = Color(0xFF4A0719);
+  static const Color wine700 = Color(0xFF310712);
 
-  // Neutral / Background tones
-  static const Color creamWhite = Color(0xFFFDF8F5);
-  static const Color warmBeige = Color(0xFFF5EDE8);
-  static const Color lightCream = Color(0xFFFAF5F0);
-  static const Color dustyRose = Color(0xFFEAD8D8);
+  // Cream
+  static const Color cream50 = Color(0xFFFFFCF7);
+  static const Color cream100 = Color(0xFFFFF6E8);
+  static const Color cream200 = Color(0xFFF4E6D1);
+  static const Color cream300 = Color(0xFFEBD7B9);
+  static const Color cream400 = Color(0xFFDDC4A1);
 
-  // Semantic / State colors
-  static const Color oceanBlue = Color(0xFF28729F);
-  static const Color textDark = Color(0xFF1A0A0A);
-  static const Color mutedWine = Color(0xFF7A3A48);
-  static const Color lightGrayWarm = Color(0xFFB09AA0);
-  static const Color dividerWarm = Color(0xFFEADCDC);
-  static const Color borderWarm = Color(0xFFE0CFCF);
+  // Gold
+  static const Color gold50 = Color(0xFFFFF8EB);
+  static const Color gold100 = Color(0xFFFFF0C7);
+  static const Color gold200 = Color(0xFFF4D08C);
+  static const Color gold300 = Color(0xFFEABF58);
+  static const Color gold400 = Color(0xFFDDA735);
+  static const Color gold500 = Color(0xFFB9801F);
 
-  // ===== Primary & Brand Semantics — Elmobde3 =====
-  static const Color primary = crimsonDeep;
-  static const Color primaryHover = crimsonHover;
-  static const Color primaryPressed = crimsonDark;
-  static const Color primarySoftBackground = palePink;
-  static const Color deepSurface = Color(0xFF2C060F);
-
-  static const Color secondary = oceanBlue;
-  static const Color accent = softRose;
-  static const Color highlight = goldHighlight;
-  static const Color navActiveGlow = Color(0xFFB94C6C);
-  static const Color navActiveText = Color(0xFFE8A0B0);
-
-  // ===== Background & Surface =====
-  static const Color background = creamWhite;
+  // Background & Surface
   static const Color surface = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
-  static const Color ligthBlackShadow = Color(0x33000000);
 
-  // ===== Border & Divider =====
-  static const Color border = borderWarm;
-  static const Color divider = dividerWarm;
+  static const Color canvas = cream50;
+  static const Color background = canvas;
 
-  // ===== Text Color Tokens =====
-  static const Color textPrimary = textDark;
-  static const Color textSecondary = mutedWine;
-  static const Color textMuted = lightGrayWarm;
+  static const Color primary = wine500;
+  static const Color primaryHover = wine400;
+  static const Color primaryPressed = wine600;
+  static const Color primarySoftBackground = wine50;
+  static const Color deepSurface = wine700;
+
+  static const Color accent = gold400;
+  static const Color highlight = gold400;
+  static const Color goldHighlight = gold400;
+  static const Color goldLight = gold300;
+  static const Color goldPale = gold50;
+
+  // --- Border & Divider ---
+  static const Color border = cream400;
+  static const Color borderWarm = cream300;
+  static const Color divider = cream200;
+  static const Color dividerWarm = cream200;
+
+  // Text Color Tokens
+  static const Color textPrimary = Color(0xFF27191D);
+  static const Color textDark = textPrimary;
+  static const Color textSecondary = Color(0xFF604B49);
+  static const Color textMuted = wine100;
   static const Color textLight = Color(0xFFFFFFFF);
-  static const Color textHighLight = goldHighlight;
-  static const Color textSoftSaga = softRose;
-  static const Color textBlack = Color(0xFF000000);
+  static const Color textHighLight = gold400;
+  static const Color textBlack = textPrimary;
+
+  static const Color success = Color(0xFF257C53);
+
+  static const Color error = Color(0xFFBA3D4D);
+  static const Color textRed = error;
+
+  // Secondary & Navigation & State
+  static const Color secondary = Color(0xFF28729F);
+  static const Color oceanBlue = Color(0xFF28729F);
   static const Color textOceanBlue = oceanBlue;
-  static const Color textRed = Color(0xFFB94C4C);
-
-  // ===== Alias / backward compat =====
-  static const Color paleSage = paleRose;
-  static const Color softSage = softRose;
-  static const Color paleMint = palePink;
-
-  // ===== State Colors =====
-  static const Color disabled = Color(0xFFCABCBE);
-  static const Color success = Color(0xFF2E7D32);
-  static const Color warning = Color(0xFFB8860B);
-  static const Color error = Color(0xFFC0392B);
+  static const Color warning = gold500;
   static const Color info = oceanBlue;
+  static const Color disabled = Color(0xFFC2CAC4);
+  static const Color crimsonDeep = wine500;
+  static const Color crimsonDark = wine600;
+  static const Color crimsonHover = wine400;
+  static const Color palePink = wine50;
+  static const Color softRose = wine100;
+  static const Color paleRose = wine50;
+  static const Color creamWhite = cream50;
+  static const Color warmBeige = cream100;
+  static const Color lightCream = cream50;
+  static const Color dustyRose = cream300;
+  static const Color mutedWine = textSecondary;
+  static const Color lightGrayWarm = wine100;
+  static const Color textSoftSaga = wine100;
+  static const Color paleSage = wine50;
+  static const Color softSage = wine100;
+  static const Color paleMint = wine50;
 }

@@ -13,17 +13,15 @@ import 'package:get_it/get_it.dart';
 
 void registerCoreDependencies(GetIt getIt) {
   _registerFirebaseDependencies(getIt);
-  _registerNetworkDependencies(getIt);
   _registerCoreServices(getIt);
+  _registerNetworkDependencies(getIt);
   _registerCoreCubits(getIt);
 }
 
 void _registerFirebaseDependencies(GetIt getIt) {
   getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
 
-  getIt.registerLazySingleton<FirebaseFirestore>(
-    () => FirebaseFirestore.instance,
-  );
+  getIt.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
 
   getIt.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
 
@@ -33,9 +31,7 @@ void _registerFirebaseDependencies(GetIt getIt) {
 }
 
 void _registerNetworkDependencies(GetIt getIt) {
-  getIt.registerLazySingleton<NetworkInfo>(
-    () => InternetConnectionNetworkInfo(),
-  );
+  getIt.registerLazySingleton<NetworkInfo>(() => InternetConnectionNetworkInfo());
 }
 
 void _registerCoreServices(GetIt getIt) {

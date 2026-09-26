@@ -1,10 +1,11 @@
+import 'package:al_mobdea/app/routes/screen_routes/feature/app_startup_routes.dart';
 import 'package:flutter/material.dart';
 
 abstract final class AppRoutes {
   const AppRoutes._();
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
-    return _buildUnknownRoute(settings);
+    return AppStartupRoutes.generateRoute(settings) ?? _buildUnknownRoute(settings);
   }
 
   static Route<dynamic> _buildUnknownRoute(RouteSettings settings) {
