@@ -50,8 +50,7 @@ class CustomOperationResultDialog extends StatefulWidget {
   }
 }
 
-class _CustomOperationResultDialogState
-    extends State<CustomOperationResultDialog> {
+class _CustomOperationResultDialogState extends State<CustomOperationResultDialog> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
 
@@ -72,8 +71,7 @@ class _CustomOperationResultDialogState
   }
 
   bool get hasSecondaryAction {
-    return widget.secondaryActionText != null &&
-        widget.secondaryActionText!.trim().isNotEmpty;
+    return widget.secondaryActionText != null && widget.secondaryActionText!.trim().isNotEmpty;
   }
 
   @override
@@ -96,11 +94,7 @@ class _CustomOperationResultDialogState
       return;
     }
 
-    showAppToast(
-      context,
-      message: 'تم نسخ البريد الإلكتروني',
-      icon: Icons.copy_rounded,
-    );
+    showAppToast(context, message: 'تم نسخ البريد الإلكتروني', icon: Icons.copy_rounded);
   }
 
   Future<void> _copyPassword() async {
@@ -114,11 +108,7 @@ class _CustomOperationResultDialogState
       return;
     }
 
-    showAppToast(
-      context,
-      message: 'تم نسخ كلمة المرور',
-      icon: Icons.copy_rounded,
-    );
+    showAppToast(context, message: 'تم نسخ كلمة المرور', icon: Icons.copy_rounded);
   }
 
   Future<void> _copyCredentials() async {
@@ -144,9 +134,7 @@ class _CustomOperationResultDialogState
 
     showAppToast(
       context,
-      message: hasPassword
-          ? 'تم نسخ بيانات تسجيل الدخول'
-          : 'تم نسخ البريد الإلكتروني',
+      message: hasPassword ? 'تم نسخ بيانات تسجيل الدخول' : 'تم نسخ البريد الإلكتروني',
       icon: Icons.copy_all_rounded,
     );
   }
@@ -199,10 +187,7 @@ class _CustomOperationResultDialogState
             decoration: BoxDecoration(
               color: ColorPalette.surface,
               borderRadius: BorderRadius.circular(28.r),
-              border: Border.all(
-                color: statusColor.withValues(alpha: 0.30),
-                width: 1.2.w,
-              ),
+              border: Border.all(color: statusColor.withValues(alpha: 0.30), width: 1.2.w),
               boxShadow: [
                 BoxShadow(
                   color: statusColor.withValues(alpha: 0.12),
@@ -271,18 +256,13 @@ class _CustomOperationResultDialogState
                     ),
                   verticalSpace(16),
                   CustomSecondaryButton(
-                    text: hasPassword
-                        ? 'نسخ بيانات الدخول'
-                        : 'نسخ البريد الإلكتروني',
+                    text: hasPassword ? 'نسخ بيانات الدخول' : 'نسخ البريد الإلكتروني',
                     icon: Icons.copy_all_rounded,
                     onPressed: _copyCredentials,
                   ),
                 ],
                 verticalSpace(26),
-                CustomButton(
-                  text: widget.actionText,
-                  onPressed: _handlePrimaryAction,
-                ),
+                CustomButton(text: widget.actionText, onPressed: _handlePrimaryAction),
                 if (hasSecondaryAction) ...[
                   verticalSpace(12),
                   CustomSecondaryButton(

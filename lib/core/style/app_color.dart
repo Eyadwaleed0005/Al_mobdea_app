@@ -32,6 +32,9 @@ class ColorPalette {
   static const Color surface = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
 
+  static const Color cardFill = Color(0xFFFFFBF6);
+  static const Color cardShadow = Color(0xFF380917);
+
   static const Color canvas = cream50;
   static const Color background = canvas;
 
@@ -48,7 +51,7 @@ class ColorPalette {
   static const Color goldPale = gold50;
 
   // --- Border & Divider ---
-  static const Color border = cream400;
+  static const Color border = Color(0xFFDDD3D0);
   static const Color borderWarm = cream300;
   static const Color divider = cream200;
   static const Color dividerWarm = cream200;

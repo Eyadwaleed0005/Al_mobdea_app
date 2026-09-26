@@ -57,9 +57,7 @@ class CustomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           padding: padding ?? EdgeInsets.symmetric(horizontal: 16.w),
           backgroundColor: buttonBackground,
-          disabledBackgroundColor: isLoading
-              ? buttonBackground
-              : ColorPalette.disabled,
+          disabledBackgroundColor: isLoading ? buttonBackground : ColorPalette.disabled,
           foregroundColor: buttonForeground,
           disabledForegroundColor: buttonForeground,
           elevation: elevation ?? 0,
@@ -90,9 +88,8 @@ class CustomButton extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: (textStyle ?? AppTextStyle.font15TextLightBoldTajawal()).copyWith(
-                            color: buttonForeground,
-                          ),
+                          style: (textStyle ?? AppTextStyle.font14TextLightSemiBoldTajawal())
+                              .copyWith(color: buttonForeground),
                         ),
                       ),
                       if (suffixIcon != null) ...[horizontalSpace(8), suffixIcon!],

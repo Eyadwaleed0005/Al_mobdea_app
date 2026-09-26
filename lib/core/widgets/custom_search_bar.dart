@@ -103,19 +103,16 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         textDirection: TextDirection.rtl,
         textAlign: TextAlign.right,
         cursorColor: ColorPalette.primary,
-        style: AppTextStyle.font15TextPrimaryMediumTajawal(),
+        style: AppTextStyle.font13TextPrimarySemiBoldTajawal(),
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintTextDirection: TextDirection.rtl,
-          hintStyle: AppTextStyle.font15TextMutedRegularTajawal(),
+          hintStyle: AppTextStyle.font11TextMutedRegularTajawal(),
           filled: true,
           fillColor: ColorPalette.surface,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 20.w,
-            vertical: 17.h,
-          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 17.h),
           suffixIcon: _buildSuffixIcon(),
           suffixIconConstraints: BoxConstraints(
             minWidth: 56.w,
@@ -124,10 +121,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             maxHeight: 56.h,
           ),
           enabledBorder: _buildBorder(color: ColorPalette.border, width: 1.w),
-          focusedBorder: _buildBorder(
-            color: ColorPalette.primary,
-            width: 1.3.w,
-          ),
+          focusedBorder: _buildBorder(color: ColorPalette.primary, width: 1.3.w),
           disabledBorder: _buildBorder(color: ColorPalette.divider, width: 1.w),
         ),
       ),
@@ -148,10 +142,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     );
   }
 
-  OutlineInputBorder _buildBorder({
-    required Color color,
-    required double width,
-  }) {
+  OutlineInputBorder _buildBorder({required Color color, required double width}) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(18.r),
       borderSide: BorderSide(color: color, width: width),
