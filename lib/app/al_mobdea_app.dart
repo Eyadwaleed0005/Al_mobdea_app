@@ -33,7 +33,7 @@ class AlMobdeaApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             locale: DevicePreviewService.locale(context),
             theme: ThemeData(),
-            initialRoute: RouteNames.homeScreen,
+            initialRoute: RouteNames.liveSessionScreen,
             onGenerateRoute: AppRoutes.generateRoute,
             builder: _buildApp,
           );

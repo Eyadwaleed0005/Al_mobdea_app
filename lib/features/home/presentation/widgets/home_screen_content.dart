@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeScreenContent extends StatelessWidget {
-  const HomeScreenContent({super.key});
+  const HomeScreenContent({super.key, required this.onLiveSessionPressed});
+
+  final VoidCallback onLiveSessionPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class HomeScreenContent extends StatelessWidget {
             style: AppTextStyle.font21TextDarkBoldKufam(),
           ),
           verticalSpace(14),
-          LiveSessionBanner(onTap: () => {}),
+          LiveSessionBanner(onTap: onLiveSessionPressed),
           SizedBox(height: 36.h),
           const HomeQuickLinksSection(),
         ],
