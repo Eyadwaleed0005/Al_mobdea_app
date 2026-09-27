@@ -109,7 +109,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintTextDirection: TextDirection.rtl,
-          hintStyle: AppTextStyle.font11TextMutedRegularTajawal(),
+          hintStyle: AppTextStyle.font13TextMutedRegularTajawal(),
           filled: true,
           fillColor: ColorPalette.surface,
           contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 17.h),

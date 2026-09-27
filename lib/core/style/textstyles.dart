@@ -145,9 +145,9 @@ class AppTextStyle {
     );
   }
 
-  static TextStyle font11TextMutedRegularTajawal() {
+  static TextStyle font13TextMutedRegularTajawal() {
     return TextStyle(
-      fontSize: 11.sp,
+      fontSize: 13.sp,
       fontWeight: FontWeightHelper.regular,
       fontFamily: tajawal,
       color: ColorPalette.textSecondary,
