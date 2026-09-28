@@ -5,6 +5,7 @@ import 'package:al_mobdea/app/dependency_injection/features/live_session_depende
 import 'package:al_mobdea/app/dependency_injection/features/lessons_dependencies.dart';
 import 'package:al_mobdea/app/dependency_injection/features/main_navigation_dependencies.dart';
 import 'package:al_mobdea/app/dependency_injection/features/secure_screen_dependencies.dart';
+import 'package:al_mobdea/app/dependency_injection/features/study_notes_dependencies.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -15,6 +16,7 @@ void setupServiceLocator() {
   registerAuthenticationDependencies(getIt);
   registerLiveSessionDependencies(getIt);
   registerLessonsDependencies(getIt);
+  registerStudyNotesDependencies(getIt);
   registerMainNavigationDependencies(getIt);
   registerSecureScreenDependencies(getIt);
 }
