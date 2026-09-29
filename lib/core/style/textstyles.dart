@@ -558,4 +558,31 @@ class AppTextStyle {
       color: ColorPalette.primary,
     );
   }
+
+  static TextStyle font24TextPrimarySemiBoldKufam() {
+    return TextStyle(
+      fontSize: 24.sp,
+      fontWeight: FontWeightHelper.semiBold,
+      fontFamily: kufam,
+      color: ColorPalette.textPrimary,
+    );
+  }
+
+  static TextStyle font20TextLightBoldKufam() {
+    return TextStyle(
+      fontSize: 20.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: kufam,
+      color: ColorPalette.textLight,
+    );
+  }
+
+  static TextStyle font15TextPrimaryMediumTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.textPrimary,
+    );
+  }
 }
