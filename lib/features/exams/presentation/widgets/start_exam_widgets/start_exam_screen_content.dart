@@ -134,7 +134,12 @@ class _StartExamScreenContentState extends State<StartExamScreenContent> {
           bottom: false,
           child: Column(
             children: [
-              CurvedAppBar(title: state.session.exam.examName),
+              CurvedAppBar(
+                title: state.session.exam.examName,
+                onBack: () {
+                  _showFinishExamDialog(context: context, state: state);
+                },
+              ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
