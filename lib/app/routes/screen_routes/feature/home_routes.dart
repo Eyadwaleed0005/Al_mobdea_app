@@ -1,0 +1,25 @@
+import 'package:al_mobdea/app/routes/screen_routes/route_names.dart';
+import 'package:al_mobdea/features/home/presentation/screens/home_screen.dart';
+import 'package:flutter/material.dart';
+
+abstract final class HomeRoutes {
+  const HomeRoutes._();
+
+  static Route<dynamic>? generateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case RouteNames.homeScreen:
+        final arguments = settings.arguments;
+        final gradeId = arguments is String && arguments.trim().isNotEmpty
+            ? arguments.trim()
+            : null;
+
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => HomeScreen(gradeId: gradeId),
+        );
+
+      default:
+        return null;
+    }
+  }
+}
