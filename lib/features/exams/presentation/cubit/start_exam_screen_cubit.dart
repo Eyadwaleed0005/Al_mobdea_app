@@ -43,8 +43,12 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
 
   Duration _remainingDuration = Duration.zero;
 
+  bool get _isSubmissionStopped {
+    return _cachedAttempt?.isSubmissionStopped == true;
+  }
+
   Future<void> initialize({required StudentExamSessionEntity session}) async {
-    if (_isInitializing || isClosed) {
+    if (_isInitializing || _isSubmitting || isClosed) {
       return;
     }
 
@@ -52,57 +56,62 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
     _cancelTimer();
 
     _session = session;
+    _cachedAttempt = null;
     _currentQuestionIndex = 0;
     _hasHandledExpiration = false;
+    _remainingDuration = Duration.zero;
 
     emit(const StartExamScreenLoading());
 
-    final Either<AppErrorModel, CachedExamAttemptEntity?> cacheResult =
-        await _getCachedExamAttemptUseCase(resultId: session.attempt.resultId);
-
-    if (isClosed) {
-      _isInitializing = false;
-
-      return;
-    }
-
-    cacheResult.fold(
-      (AppErrorModel error) {
-        emit(StartExamScreenFailure(error: error));
-      },
-      (CachedExamAttemptEntity? cachedAttempt) {
-        if (cachedAttempt == null) {
-          emit(
-            StartExamScreenFailure(
-              error: LocalStorageErrorHandler.dataNotFound(),
-            ),
+    try {
+      final Either<AppErrorModel, CachedExamAttemptEntity?> cacheResult =
+          await _getCachedExamAttemptUseCase(
+            resultId: session.attempt.resultId,
           );
 
-          return;
-        }
+      if (isClosed) {
+        return;
+      }
 
-        _cachedAttempt = cachedAttempt;
-        _remainingDuration = _calculateRemainingDuration();
+      cacheResult.fold(
+        (AppErrorModel error) {
+          emit(StartExamScreenFailure(error: error));
+        },
+        (CachedExamAttemptEntity? cachedAttempt) {
+          if (cachedAttempt == null) {
+            emit(
+              StartExamScreenFailure(
+                error: LocalStorageErrorHandler.dataNotFound(),
+              ),
+            );
+            return;
+          }
 
-        _emitReadyState();
+          _cachedAttempt = cachedAttempt;
+          _remainingDuration = _calculateRemainingDuration();
 
-        if (cachedAttempt.isPendingSubmission) {
-          unawaited(submitExam(isAutomatic: cachedAttempt.isTimeExpired));
+          _emitReadyState();
 
-          return;
-        }
+          if (cachedAttempt.isSubmissionStopped) {
+            return;
+          }
 
-        if (_remainingDuration == Duration.zero) {
-          unawaited(_handleTimeExpired());
+          if (cachedAttempt.isPendingSubmission) {
+            unawaited(submitExam(isAutomatic: cachedAttempt.isTimeExpired));
+            return;
+          }
 
-          return;
-        }
+          if (_remainingDuration == Duration.zero) {
+            unawaited(_handleTimeExpired());
+            return;
+          }
 
-        _startTimer();
-      },
-    );
-
-    _isInitializing = false;
+          _startTimer();
+        },
+      );
+    } finally {
+      _isInitializing = false;
+    }
   }
 
   Future<void> retryLoading() async {
@@ -123,12 +132,12 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
         index >= session.questions.length ||
         index == _currentQuestionIndex ||
         _isSubmitting ||
+        _isSubmissionStopped ||
         isClosed) {
       return;
     }
 
     _currentQuestionIndex = index;
-
     _emitReadyState();
   }
 
@@ -140,9 +149,15 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
 
     if (cachedAttempt == null ||
         _isSubmitting ||
-        _remainingDuration == Duration.zero ||
         cachedAttempt.isPendingSubmission ||
+        cachedAttempt.isSubmissionStopped ||
         isClosed) {
+      return;
+    }
+
+    // نراجع وقت الانتهاء مباشرة حتى لو لم يعمل آخر tick بعد.
+    if (_calculateRemainingDuration() == Duration.zero) {
+      unawaited(_handleTimeExpired());
       return;
     }
 
@@ -189,7 +204,7 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
       selectedChoiceIndex: selectedChoiceIndex,
     );
 
-    if (isClosed) {
+    if (isClosed || _isSubmissionStopped) {
       return;
     }
 
@@ -208,7 +223,11 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
     final StudentExamSessionEntity? session = _session;
     final CachedExamAttemptEntity? cachedAttempt = _cachedAttempt;
 
-    if (session == null || cachedAttempt == null || _isSubmitting || isClosed) {
+    if (session == null ||
+        cachedAttempt == null ||
+        cachedAttempt.isSubmissionStopped ||
+        _isSubmitting ||
+        isClosed) {
       return;
     }
 
@@ -217,54 +236,63 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
 
     _remainingDuration = _calculateRemainingDuration();
 
-    emit(
-      StartExamScreenSubmitting(
+    final bool shouldSubmitAutomatically =
+        isAutomatic ||
+        cachedAttempt.isTimeExpired ||
+        _remainingDuration == Duration.zero;
+
+    try {
+      emit(
+        StartExamScreenSubmitting(
+          session: session,
+          cachedAttempt: cachedAttempt,
+          currentQuestionIndex: _currentQuestionIndex,
+          remainingDuration: _remainingDuration,
+          isAutomatic: shouldSubmitAutomatically,
+        ),
+      );
+
+      final SubmitStudentExamEntity submission = _createSubmission(
         session: session,
         cachedAttempt: cachedAttempt,
-        currentQuestionIndex: _currentQuestionIndex,
-        remainingDuration: _remainingDuration,
-        isAutomatic: isAutomatic,
-      ),
-    );
+        isAutomatic: shouldSubmitAutomatically,
+      );
 
-    final SubmitStudentExamEntity submission = _createSubmission(
-      session: session,
-      cachedAttempt: cachedAttempt,
-      isAutomatic: isAutomatic,
-    );
+      final Either<AppErrorModel, StudentExamResultEntity> submissionResult =
+          await _submitStudentExamUseCase(submission: submission);
 
-    final Either<AppErrorModel, StudentExamResultEntity> submissionResult =
-        await _submitStudentExamUseCase(submission: submission);
+      if (isClosed) {
+        return;
+      }
 
-    _isSubmitting = false;
+      await submissionResult.fold<Future<void>>(
+        (AppErrorModel error) async {
+          await _refreshCachedAttempt();
 
-    if (isClosed) {
-      return;
+          if (isClosed) {
+            return;
+          }
+
+          _remainingDuration = _calculateRemainingDuration();
+
+          _emitActionFailure(error: error, isSubmissionFailure: true);
+
+          final CachedExamAttemptEntity? currentAttempt = _cachedAttempt;
+
+          if (currentAttempt != null &&
+              !currentAttempt.isPendingSubmission &&
+              !currentAttempt.isSubmissionStopped &&
+              _remainingDuration > Duration.zero) {
+            _startTimer();
+          }
+        },
+        (StudentExamResultEntity result) async {
+          emit(StartExamScreenResultReady(result: result));
+        },
+      );
+    } finally {
+      _isSubmitting = false;
     }
-
-    await submissionResult.fold<Future<void>>(
-      (AppErrorModel error) async {
-        await _refreshCachedAttempt();
-
-        if (isClosed) {
-          return;
-        }
-
-        _remainingDuration = _calculateRemainingDuration();
-
-        _emitActionFailure(error: error, isSubmissionFailure: true);
-
-        final CachedExamAttemptEntity? currentAttempt = _cachedAttempt;
-
-        if (_remainingDuration > Duration.zero &&
-            currentAttempt?.isPendingSubmission != true) {
-          _startTimer();
-        }
-      },
-      (StudentExamResultEntity result) async {
-        emit(StartExamScreenResultReady(result: result));
-      },
-    );
   }
 
   void restoreExamState() {
@@ -278,11 +306,25 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
   void _startTimer() {
     _cancelTimer();
 
+    final CachedExamAttemptEntity? cachedAttempt = _cachedAttempt;
+
+    if (isClosed ||
+        cachedAttempt == null ||
+        cachedAttempt.isSubmissionStopped ||
+        cachedAttempt.isPendingSubmission) {
+      return;
+    }
+
     _timer = Timer.periodic(const Duration(seconds: 1), _handleTimerTick);
   }
 
   void _handleTimerTick(Timer timer) {
-    if (isClosed || _isSubmitting) {
+    if (isClosed || _isSubmissionStopped) {
+      _cancelTimer();
+      return;
+    }
+
+    if (_isSubmitting) {
       return;
     }
 
@@ -301,7 +343,10 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
   }
 
   Future<void> _handleTimeExpired() async {
-    if (_hasHandledExpiration || _isSubmitting || isClosed) {
+    if (_hasHandledExpiration ||
+        _isSubmitting ||
+        _isSubmissionStopped ||
+        isClosed) {
       return;
     }
 
@@ -398,6 +443,7 @@ class StartExamScreenCubit extends Cubit<StartExamScreenState> {
     final CachedExamAttemptEntity? currentAttempt = _cachedAttempt;
 
     if (currentAttempt == null ||
+        currentAttempt.isSubmissionStopped ||
         currentAttempt.selectedChoiceFor(questionId) != failedChoiceIndex) {
       return;
     }

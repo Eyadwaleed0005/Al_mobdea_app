@@ -61,7 +61,7 @@ class SharedPreferencesExamAttemptCacheDataSource
 
     final List<CachedExamAttemptEntity> pendingAttempts = attempts
         .where((CachedExamAttemptEntity attempt) {
-          return attempt.isPendingSubmission;
+          return attempt.isPendingSubmission && !attempt.isSubmissionStopped;
         })
         .toList(growable: false);
 
@@ -71,15 +71,46 @@ class SharedPreferencesExamAttemptCacheDataSource
   @override
   Future<void> saveAttempt({required CachedExamAttemptEntity attempt}) {
     return _enqueueWrite(() async {
-      CachedExamAttemptValidator.validate(attempt);
-
       final String normalizedResultId = ExamAttemptIdentifierValidator.validate(
         attempt.resultId,
       );
 
+      final CachedExamAttemptEntity? existingAttempt = await getAttempt(
+        resultId: normalizedResultId,
+      );
+
+      CachedExamAttemptEntity attemptToSave = attempt;
+
+      if (existingAttempt != null && existingAttempt.isSubmissionStopped) {
+        final bool hasSavedError = _hasStopError(existingAttempt);
+        final bool hasIncomingError = _hasStopError(attempt);
+
+        // لا نعيد تفعيل المحاولة أو نستبدل بياناتها بنسخة قديمة.
+        // نسمح فقط بإكمال الخطأ المحفوظ إذا كان ناقصًا.
+        if (hasSavedError ||
+            !attempt.isSubmissionStopped ||
+            !hasIncomingError) {
+          return;
+        }
+
+        if (existingAttempt.examId.trim() != attempt.examId.trim()) {
+          LocalStorageErrorHandler.throwInvalidData();
+        }
+
+        attemptToSave = existingAttempt.copyWith(
+          isSubmissionStopped: true,
+          isPendingSubmission: false,
+          submissionStopCode: attempt.submissionStopCode,
+          submissionStopMessage: attempt.submissionStopMessage,
+          updatedAt: DateTime.now().toUtc(),
+        );
+      }
+
+      CachedExamAttemptValidator.validate(attemptToSave);
+
       await SharedPreferencesHelper.saveString(
         key: SharedPreferenceKeys.examAttempt(normalizedResultId),
-        value: CachedExamAttemptMapper.encode(attempt),
+        value: CachedExamAttemptMapper.encode(attemptToSave),
       );
 
       final List<String> resultIds = await _getAttemptIds();
@@ -90,6 +121,13 @@ class SharedPreferencesExamAttemptCacheDataSource
         await _saveAttemptIds(resultIds);
       }
     });
+  }
+
+  bool _hasStopError(CachedExamAttemptEntity attempt) {
+    final String code = attempt.submissionStopCode?.trim() ?? '';
+    final String message = attempt.submissionStopMessage?.trim() ?? '';
+
+    return code.isNotEmpty && message.isNotEmpty;
   }
 
   @override
@@ -153,6 +191,10 @@ class SharedPreferencesExamAttemptCacheDataSource
       final CachedExamAttemptEntity attempt = await _requireAttempt(
         normalizedResultId,
       );
+
+      if (attempt.isSubmissionStopped) {
+        return;
+      }
 
       final CachedExamAttemptEntity updatedAttempt = attempt.copyWith(
         isTimeExpired: isTimeExpired || attempt.isTimeExpired,
