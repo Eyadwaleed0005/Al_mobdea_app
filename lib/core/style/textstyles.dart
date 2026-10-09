@@ -145,9 +145,9 @@ class AppTextStyle {
     );
   }
 
-  static TextStyle font11TextMutedRegularTajawal() {
+  static TextStyle font13TextMutedRegularTajawal() {
     return TextStyle(
-      fontSize: 11.sp,
+      fontSize: 13.sp,
       fontWeight: FontWeightHelper.regular,
       fontFamily: tajawal,
       color: ColorPalette.textSecondary,
@@ -484,6 +484,78 @@ class AppTextStyle {
       fontWeight: FontWeightHelper.semiBold,
       fontFamily: kufam,
       color: ColorPalette.textPrimary,
+    );
+  }
+
+  static TextStyle font22TextPrimarySemiBoldKufam() {
+    return TextStyle(
+      fontSize: 22.sp,
+      fontWeight: FontWeightHelper.semiBold,
+      fontFamily: kufam,
+      color: ColorPalette.textPrimary,
+    );
+  }
+
+  static TextStyle font22TextPrimaryBoldKufam() {
+    return TextStyle(
+      fontSize: 22.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: kufam,
+      color: ColorPalette.textPrimary,
+    );
+  }
+
+  static TextStyle font18TextPrimaryBoldKufam() {
+    return TextStyle(
+      fontSize: 18.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: kufam,
+      color: ColorPalette.textPrimary,
+    );
+  }
+
+  static TextStyle font16TextPrimaryBoldTajawal() {
+    return TextStyle(
+      fontSize: 16.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: tajawal,
+      color: ColorPalette.textPrimary,
+    );
+  }
+
+  static TextStyle font16TextLightBoldTajawal() {
+    return TextStyle(
+      fontSize: 16.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: tajawal,
+      color: ColorPalette.textLight,
+    );
+  }
+
+  static TextStyle font14PrimaryMediumTajawal() {
+    return TextStyle(
+      fontSize: 14.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.primary,
+    );
+  }
+
+  static TextStyle font15PrimaryBoldTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: tajawal,
+      color: ColorPalette.primary,
+    );
+  }
+
+  static TextStyle font24PrimaryBoldKufam() {
+    return TextStyle(
+      fontSize: 24.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: kufam,
+      color: ColorPalette.primary,
     );
   }
 }

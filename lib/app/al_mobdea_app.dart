@@ -3,6 +3,8 @@ import 'package:al_mobdea/app/routes/screen_routes/app_routes.dart';
 import 'package:al_mobdea/app/routes/screen_routes/route_names.dart';
 import 'package:al_mobdea/core/connection/cubit/network_status_cubit.dart';
 import 'package:al_mobdea/core/services/device_preview_service.dart';
+import 'package:al_mobdea/features/exams/domain/validation/pending_exam_submissions_sync_handler.dart';
+import 'package:al_mobdea/features/exams/presentation/cubit/pending_exam_submissions_sync_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,6 +23,11 @@ class AlMobdeaApp extends StatelessWidget {
             return getIt<NetworkStatusCubit>()..startMonitoring();
           },
         ),
+        BlocProvider<PendingExamSubmissionsSyncCubit>(
+          create: (_) {
+            return getIt<PendingExamSubmissionsSyncCubit>()..initialize();
+          },
+        ),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
@@ -33,7 +40,7 @@ class AlMobdeaApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             locale: DevicePreviewService.locale(context),
             theme: ThemeData(),
-            initialRoute: RouteNames.liveSessionScreen,
+            initialRoute: RouteNames.mainNavigationScreen,
             onGenerateRoute: AppRoutes.generateRoute,
             builder: _buildApp,
           );
@@ -43,6 +50,11 @@ class AlMobdeaApp extends StatelessWidget {
   }
 
   Widget _buildApp(BuildContext context, Widget? child) {
-    return DevicePreviewService.appBuilder(context, child);
+    final Widget previewedChild = DevicePreviewService.appBuilder(
+      context,
+      child,
+    );
+
+    return PendingExamSubmissionsSyncHandler(child: previewedChild);
   }
 }

@@ -8,7 +8,6 @@ abstract final class HomeRoutes {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteNames.homeScreen:
-      case RouteNames.mainNavigationScreen:
         final arguments = settings.arguments;
         final gradeId = arguments is String && arguments.trim().isNotEmpty
             ? arguments.trim()

@@ -62,11 +62,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape =
-        MediaQuery.orientationOf(context) == Orientation.landscape;
+    final isLandscape = MediaQuery.orientationOf(context) == Orientation.landscape;
 
-    final effectiveHeight =
-        toolbarHeight ?? (isLandscape ? _landscapeHeight : _portraitHeight);
+    final effectiveHeight = toolbarHeight ?? (isLandscape ? _landscapeHeight : _portraitHeight);
 
     return AppBar(
       toolbarHeight: effectiveHeight,
@@ -89,8 +87,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget? _buildLeading(BuildContext context) {
-    final shouldShowBackButton =
-        showBackButton && Navigator.of(context).canPop();
+    final shouldShowBackButton = showBackButton && Navigator.of(context).canPop();
 
     if (!shouldShowBackButton) {
       return leading;
@@ -102,10 +99,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: IconButton(
         tooltip: 'رجوع',
         padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(
-          minWidth: _leadingWidth,
-          minHeight: _leadingWidth,
-        ),
+        constraints: const BoxConstraints(minWidth: _leadingWidth, minHeight: _leadingWidth),
         onPressed: () {
           Navigator.of(context).pop();
         },
