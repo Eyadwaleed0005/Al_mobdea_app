@@ -8,6 +8,7 @@ import 'package:al_mobdea/core/widgets/background/background_student_layout.dart
 import 'package:al_mobdea/features/exams/presentation/screens/exams_screen.dart';
 import 'package:al_mobdea/features/home/presentation/screens/home_screen.dart';
 import 'package:al_mobdea/features/lessons/presentation/screens/lessons_screen.dart';
+import 'package:al_mobdea/features/notifications/presentation/cubit/notification_cubit.dart';
 import 'package:al_mobdea/features/study_notes/presentation/screens/study_notes_screen.dart';
 import 'package:al_mobdea/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
 import 'package:al_mobdea/features/profile/presentation/screens/profile_screen.dart';
@@ -34,36 +35,48 @@ class MainNavigationScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<BottomNavigationCubit>(
-          create: (_) => getIt<BottomNavigationCubit>()..changeIndex(validInitialIndex),
+          create: (_) {
+            return BottomNavigationCubit()..changeIndex(validInitialIndex);
+          },
         ),
         BlocProvider<StudentGradeSyncCubit>(
-          create: (_) => getIt<StudentGradeSyncCubit>()..initialize(),
+          create: (_) {
+            return getIt<StudentGradeSyncCubit>()..initialize();
+          },
         ),
       ],
-      child: _MainNavigationBackHandler(
-        child: Scaffold(
-          extendBody: true,
-          backgroundColor: ColorPalette.background,
-          body: BlocBuilder<StudentGradeSyncCubit, StudentGradeSyncState>(
-            builder: (context, gradeState) {
-              return BlocBuilder<BottomNavigationCubit, int>(
-                builder: (context, selectedIndex) {
-                  final currentIndex = selectedIndex.clamp(0, _screensCount - 1).toInt();
+      child: BlocListener<StudentGradeSyncCubit, StudentGradeSyncState>(
+        listenWhen: _shouldSyncNotificationTopic,
+        listener: _syncNotificationTopic,
+        child: _MainNavigationBackHandler(
+          child: Scaffold(
+            extendBody: true,
+            backgroundColor: ColorPalette.background,
+            body: BlocBuilder<StudentGradeSyncCubit, StudentGradeSyncState>(
+              builder: (BuildContext context, StudentGradeSyncState gradeState) {
+                return BlocBuilder<BottomNavigationCubit, int>(
+                  builder: (BuildContext context, int selectedIndex) {
+                    final int currentIndex = selectedIndex.clamp(0, _screensCount - 1);
 
-                  return IndexedStack(
-                    index: currentIndex,
-                    children: List<Widget>.generate(_screensCount, (index) {
-                      return KeyedSubtree(
-                        key: ValueKey<String>(_screenKey(index: index, gradeState: gradeState)),
-                        child: _buildScreen(context: context, index: index, gradeState: gradeState),
-                      );
-                    }),
-                  );
-                },
-              );
-            },
+                    return KeyedSubtree(
+                      key: ValueKey<String>(
+                        _screenKey(
+                          currentIndex: currentIndex,
+                          gradeState: gradeState,
+                        ),
+                      ),
+                      child: _buildScreen(
+                        context: context,
+                        currentIndex: currentIndex,
+                        gradeState: gradeState,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            bottomNavigationBar: const CustomBottomNavBar(),
           ),
-          bottomNavigationBar: const CustomBottomNavBar(),
         ),
       ),
     );
@@ -71,31 +84,33 @@ class MainNavigationScreen extends StatelessWidget {
 
   Widget _buildScreen({
     required BuildContext context,
-    required int index,
+    required int currentIndex,
     required StudentGradeSyncState gradeState,
   }) {
-    switch (index) {
+    switch (currentIndex) {
       case 0:
         return const ProfileScreen();
       case 1:
-        return _buildStudyNotesScreen(context, gradeState);
+        return const StudyNotesScreen();
       case 2:
         return HomeScreen(gradeId: _gradeIdFrom(gradeState));
       case 3:
-        return _buildLessonsScreen(context, gradeState);
+        return const LessonsScreen();
       case _examsScreenIndex:
-        return _buildExamsScreen(context, gradeState);
+        return _buildExamsScreen(context: context, gradeState: gradeState);
       default:
         return HomeScreen(gradeId: _gradeIdFrom(gradeState));
     }
   }
 
-  Widget _buildExamsScreen(BuildContext context, StudentGradeSyncState gradeState) {
+  Widget _buildExamsScreen({
+    required BuildContext context,
+    required StudentGradeSyncState gradeState,
+  }) {
     return switch (gradeState) {
       StudentGradeSyncSuccess(:final gradeId) => ExamsScreen(gradeId: gradeId),
       StudentGradeSyncFailure(:final error) => BackgroundStudentLayout(
         child: SafeArea(
-          bottom: false,
           child: AppErrorState(
             message: error.message,
             onRetry: context.read<StudentGradeSyncCubit>().retry,
@@ -116,66 +131,17 @@ class MainNavigationScreen extends StatelessWidget {
     };
   }
 
-  Widget _buildLessonsScreen(BuildContext context, StudentGradeSyncState gradeState) {
-    return switch (gradeState) {
-      StudentGradeSyncSuccess() => const LessonsScreen(),
-      StudentGradeSyncFailure(:final error) => BackgroundStudentLayout(
-        child: SafeArea(
-          bottom: false,
-          child: AppErrorState(
-            message: error.message,
-            onRetry: context.read<StudentGradeSyncCubit>().retry,
-          ),
-        ),
-      ),
-      StudentGradeSyncInitial() || StudentGradeSyncLoading() => const BackgroundStudentLayout(
-        child: Center(
-          child: AppLoadingIndicator(
-            color: ColorPalette.primary,
-            size: 34,
-            strokeWidth: 4,
-            wavelength: 16,
-            waveSpeed: 10,
-          ),
-        ),
-      ),
-    };
-  }
-
-  Widget _buildStudyNotesScreen(BuildContext context, StudentGradeSyncState gradeState) {
-    return switch (gradeState) {
-      StudentGradeSyncSuccess() => const StudyNotesScreen(),
-      StudentGradeSyncFailure(:final error) => BackgroundStudentLayout(
-        child: SafeArea(
-          bottom: false,
-          child: AppErrorState(
-            message: error.message,
-            onRetry: context.read<StudentGradeSyncCubit>().retry,
-          ),
-        ),
-      ),
-      StudentGradeSyncInitial() || StudentGradeSyncLoading() => const BackgroundStudentLayout(
-        child: Center(
-          child: AppLoadingIndicator(
-            color: ColorPalette.primary,
-            size: 34,
-            strokeWidth: 4,
-            wavelength: 16,
-            waveSpeed: 10,
-          ),
-        ),
-      ),
-    };
-  }
-
-  String _screenKey({required int index, required StudentGradeSyncState gradeState}) {
-    if (index != _examsScreenIndex && index != 3 && index != 1) {
-      return index.toString();
+  String _screenKey({
+    required int currentIndex,
+    required StudentGradeSyncState gradeState,
+  }) {
+    if (currentIndex != _examsScreenIndex) {
+      return currentIndex.toString();
     }
 
     return switch (gradeState) {
-      StudentGradeSyncSuccess(:final gradeId) => '$index-${gradeId.trim()}',
-      _ => '$index-${gradeState.runtimeType}',
+      StudentGradeSyncSuccess(:final gradeId) => '$currentIndex-${gradeId.trim()}',
+      _ => '$currentIndex-${gradeState.runtimeType}',
     };
   }
 
@@ -184,6 +150,36 @@ class MainNavigationScreen extends StatelessWidget {
       StudentGradeSyncSuccess(:final gradeId) => gradeId,
       _ => null,
     };
+  }
+
+  bool _shouldSyncNotificationTopic(
+    StudentGradeSyncState previous,
+    StudentGradeSyncState current,
+  ) {
+    if (current is! StudentGradeSyncSuccess) {
+      return false;
+    }
+
+    if (previous is! StudentGradeSyncSuccess) {
+      return true;
+    }
+
+    return previous.gradeId != current.gradeId;
+  }
+
+  void _syncNotificationTopic(
+    BuildContext context,
+    StudentGradeSyncState state,
+  ) {
+    if (state is! StudentGradeSyncSuccess) {
+      return;
+    }
+
+    unawaited(
+      context.read<NotificationCubit>().syncGradeTopic(
+        gradeId: state.gradeId,
+      ),
+    );
   }
 }
 

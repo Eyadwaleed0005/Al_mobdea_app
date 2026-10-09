@@ -125,7 +125,11 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
               verticalSpace(22),
-              CustomButton(text: 'تسجيل الدخول', onPressed: () => _submit(context)),
+              CustomButton(
+                text: 'تسجيل الدخول',
+                onPressed: () => _submit(context),
+                isLoading: isLoading,
+              ),
               verticalSpace(16),
               CustomSecondaryButton(
                 onPressed: isLoading ? null : () {},
