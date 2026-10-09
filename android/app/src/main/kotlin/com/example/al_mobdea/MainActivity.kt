@@ -1,4 +1,4 @@
-package com.example.al_mobdea
+package com.famex.alMobdea
 
 import io.flutter.embedding.android.FlutterActivity
 

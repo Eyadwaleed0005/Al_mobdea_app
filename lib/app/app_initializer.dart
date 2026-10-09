@@ -1,12 +1,20 @@
 import 'package:al_mobdea/app/dependency_injection/service_locator.dart';
+import 'package:al_mobdea/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// Top-level background message handler
 @pragma('vm:entry-point')
-Future<void> _firebaseNotificationBackgroundHandler(dynamic message) async {
-  // Handle background notification when Firebase is active
+Future<void> _firebaseNotificationBackgroundHandler(
+  RemoteMessage message,
+) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // أضف هنا معالجة رسائل الخلفية عند الحاجة.
 }
 
 abstract final class AppInitializer {
@@ -15,19 +23,21 @@ abstract final class AppInitializer {
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    await SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
-      DeviceOrientation.portraitUp,
-    ]);
+    await SystemChrome.setPreferredOrientations(
+      const <DeviceOrientation>[
+        DeviceOrientation.portraitUp,
+      ],
+    );
 
     await ScreenUtil.ensureScreenSize();
 
-    // TODO: سيتم تفعيل فايربيز بعد ربط المشروع بواسطة التيم ليدر
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
-    // FirebaseMessaging.onBackgroundMessage(
-    //   _firebaseNotificationBackgroundHandler,
-    // );
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    FirebaseMessaging.onBackgroundMessage(
+      _firebaseNotificationBackgroundHandler,
+    );
 
     setupServiceLocator();
   }

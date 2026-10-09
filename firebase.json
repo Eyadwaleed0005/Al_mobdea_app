@@ -1,0 +1,41 @@
+{
+    "functions": [
+        {
+            "source": "functions",
+            "codebase": "default",
+            "ignore": [
+                "node_modules",
+                ".git",
+                "firebase-debug.log",
+                "firebase-debug.*.log",
+                "*.local"
+            ],
+            "predeploy": [
+                "npm --prefix functions run build"
+            ]
+        }
+    ],
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "al-mobdea-education-platform",
+                    "appId": "1:649818924107:android:eb88d6279c2e93c19f59ce",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "al-mobdea-education-platform",
+                    "configurations": {
+                        "android": "1:649818924107:android:eb88d6279c2e93c19f59ce",
+                        "ios": "1:649818924107:ios:423e30b3f01da29d9f59ce",
+                        "macos": "1:649818924107:ios:423e30b3f01da29d9f59ce",
+                        "web": "1:649818924107:web:622dc6f5c02ca9619f59ce",
+                        "windows": "1:649818924107:web:99184b1af2fb8e719f59ce"
+                    }
+                }
+            }
+        }
+    }
+}
