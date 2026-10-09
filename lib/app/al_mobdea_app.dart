@@ -10,8 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AlMobdeaApp extends StatelessWidget {
   const AlMobdeaApp({super.key});
 
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +33,7 @@ class AlMobdeaApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             locale: DevicePreviewService.locale(context),
             theme: ThemeData(),
-            initialRoute: RouteNames.splashScreen,
+            initialRoute: RouteNames.loginScreen,
             onGenerateRoute: AppRoutes.generateRoute,
             builder: _buildApp,
           );

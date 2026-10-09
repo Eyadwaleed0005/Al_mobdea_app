@@ -14,6 +14,7 @@ class AppImage {
 
   // ===== images =====
   late final String alMobdea = '${baseImages}al_mobdea.png';
+  late final String logoApp = alMobdea;
   late final String splashLogo = '${baseImages}splash_logo.png';
   late final String splashBackground = '${baseImages}splash_background.png';
 

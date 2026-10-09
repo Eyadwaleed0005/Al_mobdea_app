@@ -82,15 +82,11 @@ class CustomTextFormField extends StatefulWidget {
 }
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
-  final GlobalKey<FormFieldState<String>> _fieldKey =
-      GlobalKey<FormFieldState<String>>();
+  final GlobalKey<FormFieldState<String>> _fieldKey = GlobalKey<FormFieldState<String>>();
 
   bool _skipNextValidation = false;
 
-  OutlineInputBorder _buildBorder({
-    required Color color,
-    required double width,
-  }) {
+  OutlineInputBorder _buildBorder({required Color color, required double width}) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(18.r),
       borderSide: BorderSide(color: color, width: width.w),
@@ -137,11 +133,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     final text = widget.controller.text;
 
     if (text.isEmpty) {
-      showAppToast(
-        context,
-        message: 'لا يوجد نص لنسخه',
-        icon: Icons.info_outline_rounded,
-      );
+      showAppToast(context, message: 'لا يوجد نص لنسخه', icon: Icons.info_outline_rounded);
 
       return;
     }
@@ -152,11 +144,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       return;
     }
 
-    showAppToast(
-      context,
-      message: 'تم النسخ بنجاح',
-      icon: Icons.check_circle_rounded,
-    );
+    showAppToast(context, message: 'تم النسخ بنجاح', icon: Icons.check_circle_rounded);
   }
 
   Widget? _buildSuffixIcon() {
@@ -171,11 +159,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
       tooltipMessage = widget.suffixTooltip;
     } else if (widget.isPassword && widget.showPasswordCopyIcon) {
-      icon = Icon(
-        Icons.copy_rounded,
-        color: ColorPalette.textPrimary,
-        size: 23.sp,
-      );
+      icon = Icon(Icons.copy_rounded, color: ColorPalette.textPrimary, size: 23.sp);
 
       onTap = widget.onSuffixTap ?? _copyText;
 
@@ -189,7 +173,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     Widget suffixWidget;
 
     if (onTap == null) {
-      suffixWidget = Padding(padding: EdgeInsets.all(16.r), child: icon);
+      suffixWidget = Padding(padding: EdgeInsets.zero, child: icon);
     } else {
       suffixWidget = InkWell(
         onTap: onTap,
@@ -246,7 +230,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           cursorColor: ColorPalette.primary,
           autofillHints: widget.autofillHints,
           autovalidateMode: widget.autovalidateMode,
-          style: AppTextStyle.font15TextPrimaryMediumTajawal(),
+          style: AppTextStyle.font13TextPrimarySemiBoldTajawal(),
           validator: _validate,
           onTap: _handleTap,
           onChanged: _handleChanged,
@@ -275,13 +259,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               maxHeight: 56.h,
             ),
             hintText: widget.hintText,
-            hintStyle: AppTextStyle.font15TextMutedRegularTajawal(),
+            hintStyle: AppTextStyle.font13TextSecondaryRegularTajawal(),
             filled: true,
             fillColor: ColorPalette.surface,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 20.w,
-              vertical: 17.h,
-            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 17.h),
             suffixIcon: _buildSuffixIcon(),
             suffixIconConstraints: BoxConstraints(
               minWidth: 56.w,
@@ -290,10 +271,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               maxHeight: 56.h,
             ),
             enabledBorder: _buildBorder(color: ColorPalette.border, width: 1),
-            focusedBorder: _buildBorder(
-              color: ColorPalette.primary,
-              width: 1.3,
-            ),
+            focusedBorder: _buildBorder(color: ColorPalette.primary, width: 1.3),
             disabledBorder: _buildBorder(color: ColorPalette.divider, width: 1),
             errorBorder: _buildBorder(color: errorColor, width: 1),
             focusedErrorBorder: _buildBorder(color: errorColor, width: 1.3),
@@ -313,7 +291,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           widget.labelText!,
           textAlign: TextAlign.right,
           textDirection: TextDirection.rtl,
-          style: AppTextStyle.font15TextPrimaryMediumTajawal(),
+          style: AppTextStyle.font13TextPrimarySemiBoldTajawal(),
         ),
 
         verticalSpace(8),
