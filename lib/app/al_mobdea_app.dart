@@ -18,6 +18,12 @@ class AlMobdeaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        // TODO: uncomment when firebase is initialized
+        //   BlocProvider<NotificationCubit>(
+        //   create: (_) {
+        //     return getIt<NotificationCubit>()..initialize();
+        //   },
+        // ),
         BlocProvider<NetworkStatusCubit>(
           create: (_) {
             return getIt<NetworkStatusCubit>()..startMonitoring();
@@ -50,11 +56,14 @@ class AlMobdeaApp extends StatelessWidget {
   }
 
   Widget _buildApp(BuildContext context, Widget? child) {
-    final Widget previewedChild = DevicePreviewService.appBuilder(
-      context,
-      child,
-    );
+    final Widget previewedChild = DevicePreviewService.appBuilder(context, child);
 
-    return PendingExamSubmissionsSyncHandler(child: previewedChild);
+    return PendingExamSubmissionsSyncHandler(
+      // TODO: uncomment when firebase is initialized
+      // child: NotificationNavigationHandler(
+      // navigatorKey: navigatorKey,
+      child: previewedChild,
+      // ),
+    );
   }
 }
