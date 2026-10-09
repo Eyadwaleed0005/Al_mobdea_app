@@ -24,9 +24,7 @@ class StudentBackgroundCornerGradients extends StatelessWidget {
               height: 300,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    colors: [Color(0x24690A24), Color(0x00690A24)],
-                  ),
+                  gradient: RadialGradient(colors: [Color(0x24690A24), Color(0x00690A24)]),
                 ),
               ),
             ),
@@ -40,9 +38,7 @@ class StudentBackgroundCornerGradients extends StatelessWidget {
               height: 300,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    colors: [Color(0x1A690A24), Color(0x00690A24)],
-                  ),
+                  gradient: RadialGradient(colors: [Color(0x1A690A24), Color(0x00690A24)]),
                 ),
               ),
             ),
@@ -60,7 +56,6 @@ class BackgroundStudentLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      fit: StackFit.expand,
       children: [
         const DecoratedBox(
           decoration: BoxDecoration(
