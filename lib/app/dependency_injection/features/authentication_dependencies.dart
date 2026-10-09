@@ -7,6 +7,9 @@ import 'package:al_mobdea/features/authentication/data/data_source/remote/fireba
 import 'package:al_mobdea/features/authentication/data/data_source/remote/firebase_logout_remote_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/remote/login_remote_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/remote/logout_remote_data_source.dart';
+import 'package:al_mobdea/features/authentication/data/data_source/remote/preview_login_remote_data_source.dart';
+import 'package:al_mobdea/features/authentication/data/data_source/remote/preview_logout_remote_data_source.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:al_mobdea/features/authentication/data/repositories/login_repo_impl.dart';
 import 'package:al_mobdea/features/authentication/data/repositories/logout_repository_impl.dart';
 import 'package:al_mobdea/features/authentication/domain/repositories/login_repo.dart';
@@ -34,6 +37,11 @@ void _registerLocalDataSources(GetIt getIt) {
 
 void _registerRemoteDataSources(GetIt getIt) {
   getIt.registerLazySingleton<LoginRemoteDataSource>(() {
+    //TODO: remove this when firebase is initialized
+    if (Firebase.apps.isEmpty) {
+      return const PreviewLoginRemoteDataSource();
+    }
+
     return FirebaseLoginRemoteDataSource(
       firebaseAuth: getIt<FirebaseAuth>(),
       firestoreService: getIt<FirestoreService>(),
@@ -42,6 +50,11 @@ void _registerRemoteDataSources(GetIt getIt) {
   });
 
   getIt.registerLazySingleton<LogoutRemoteDataSource>(() {
+    //TODO: remove this when firebase is initialized
+    if (Firebase.apps.isEmpty) {
+      return const PreviewLogoutRemoteDataSource();
+    }
+
     return FirebaseLogoutRemoteDataSource(
       firebaseAuth: getIt<FirebaseAuth>(),
       firestoreService: getIt<FirestoreService>(),
