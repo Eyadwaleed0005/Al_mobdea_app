@@ -208,14 +208,20 @@ class StudentExamsRepositoryImpl implements StudentExamsRepository {
         <StudentExamListItemEntity>[];
 
     for (final StudentExamEntity exam in exams) {
-      if (exam.status != StudentExamStatus.published) {
-        continue;
-      }
-
       final StudentExamAttemptEntity? attempt =
           attemptsByExamId[exam.examId.trim()];
 
       if (attempt?.isSubmitted == true) {
+        continue;
+      }
+
+      final bool isPublished = exam.status == StudentExamStatus.published;
+
+      final bool hasPendingEndedExamAttempt =
+          exam.status == StudentExamStatus.ended &&
+          attempt?.isInProgress == true;
+
+      if (!isPublished && !hasPendingEndedExamAttempt) {
         continue;
       }
 

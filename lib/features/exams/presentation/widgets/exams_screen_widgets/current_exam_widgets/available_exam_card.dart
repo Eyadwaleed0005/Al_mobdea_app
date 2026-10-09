@@ -31,7 +31,7 @@ class AvailableExamCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'اختبار متاح الآن • متاح لصفك',
+                  exam.isPublished ? 'اختبار متاح الآن • متاح لصفك' : 'محاولتك الحالية',
                   style: AppTextStyle.font12Wine600BoldTajawal().copyWith(
                     color: ColorPalette.primary,
                   ),

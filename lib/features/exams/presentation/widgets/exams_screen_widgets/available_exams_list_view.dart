@@ -28,19 +28,74 @@ class AvailableExamsListView extends StatefulWidget {
 }
 
 class _AvailableExamsListViewState extends State<AvailableExamsListView> {
-  Timer? _timer;
+  Timer? _expiryTimer;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
+    _scheduleExpiryUpdate();
+  }
+
+  @override
+  void didUpdateWidget(covariant AvailableExamsListView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _scheduleExpiryUpdate();
+  }
+
+  void _scheduleExpiryUpdate() {
+    _expiryTimer?.cancel();
+    _expiryTimer = null;
+
+    final DateTime now = DateTime.now().toUtc();
+    DateTime? nextExpiry;
+
+    for (final StudentExamListItemEntity examItem in widget.exams) {
+      final attempt = examItem.attempt;
+
+      if (attempt == null || !attempt.canContinueAt(now)) {
+        continue;
+      }
+
+      final DateTime expiresAt = attempt.expiresAt.toUtc();
+
+      if (nextExpiry == null || expiresAt.isBefore(nextExpiry)) {
+        nextExpiry = expiresAt;
+      }
+    }
+
+    if (nextExpiry == null) {
+      return;
+    }
+
+    _expiryTimer = Timer(nextExpiry.difference(now), () {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {});
+      _scheduleExpiryUpdate();
     });
+  }
+
+  void _handleExamPressed(StudentExamListItemEntity examItem) {
+    if (widget.openingExamId != null) {
+      return;
+    }
+
+    final DateTime now = DateTime.now().toUtc();
+
+    if (!examItem.canStart && !examItem.canContinueAt(now)) {
+      setState(() {});
+      _scheduleExpiryUpdate();
+      return;
+    }
+
+    widget.onExamPressed(examItem);
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _expiryTimer?.cancel();
     super.dispose();
   }
 
@@ -55,11 +110,23 @@ class _AvailableExamsListViewState extends State<AvailableExamsListView> {
       separatorBuilder: (_, _) => verticalSpace(24),
       itemBuilder: (BuildContext context, int index) {
         final examItem = widget.exams[index];
-        final isOpening = widget.openingExamId?.trim() == examItem.exam.examId.trim();
+
+        final isOpening =
+            widget.openingExamId?.trim() == examItem.exam.examId.trim();
+
         final anotherExamIsOpening = widget.openingExamId != null && !isOpening;
+
         final shouldAutoSubmit = examItem.shouldAutoSubmitAt(currentDate);
-        final canPress = !isOpening && !anotherExamIsOpening && !shouldAutoSubmit;
-        final buttonText = _buttonText(examItem: examItem, shouldAutoSubmit: shouldAutoSubmit);
+
+        final canOpen =
+            examItem.canStart || examItem.canContinueAt(currentDate);
+
+        final canPress = !isOpening && !anotherExamIsOpening && canOpen;
+
+        final buttonText = _buttonText(
+          examItem: examItem,
+          shouldAutoSubmit: shouldAutoSubmit,
+        );
         final buttonOpacity = isOpening || canPress ? 1.0 : 0.65;
         final remainingDuration = _calculateClosingDuration(examItem, currentDate);
         final countdownText = remainingDuration == null
@@ -104,7 +171,9 @@ class _AvailableExamsListViewState extends State<AvailableExamsListView> {
                             CustomButton(
                               text: isOpening ? '' : buttonText,
                               textStyle: AppTextStyle.font16TextLightBoldTajawal(),
-                              onPressed: () => widget.onExamPressed(examItem),
+                              onPressed: () {
+                                _handleExamPressed(examItem);
+                              },
                               background: ColorPalette.primary,
                               foreground: ColorPalette.textLight,
                               height: 52.h,
@@ -169,6 +238,6 @@ class _AvailableExamsListViewState extends State<AvailableExamsListView> {
   }) {
     if (shouldAutoSubmit) return 'بانتظار تسليم الاختبار';
     if (examItem.hasAttempt) return 'استمرار الاختبار';
-    return 'ابدأ الامتحان';
+    return examItem.canStart ? 'ابدأ الامتحان' : 'الاختبار غير متاح';
   }
 }
