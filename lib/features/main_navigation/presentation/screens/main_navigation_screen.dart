@@ -7,6 +7,7 @@ import 'package:al_mobdea/core/widgets/app_loading_indicator.dart';
 import 'package:al_mobdea/core/widgets/background/background_student_layout.dart';
 import 'package:al_mobdea/features/home/presentation/screens/home_screen.dart';
 import 'package:al_mobdea/features/lessons/presentation/screens/lessons_screen.dart';
+import 'package:al_mobdea/features/study_notes/presentation/screens/study_notes_screen.dart';
 import 'package:al_mobdea/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
 import 'package:al_mobdea/features/main_navigation/presentation/cubit/student_grade_sync_cubit.dart';
 import 'package:al_mobdea/features/main_navigation/presentation/cubit/student_grade_sync_state.dart';
@@ -85,11 +86,7 @@ class MainNavigationScreen extends StatelessWidget {
           icon: Icons.person_outline_rounded,
         );
       case 1:
-        return const _NavigationPlaceholderScreen(
-          title: 'المذكرات',
-          description: 'ستظهر مذكراتك الدراسية هنا عند إضافة صفحة المذكرات.',
-          icon: Icons.note_alt_outlined,
-        );
+        return _buildStudyNotesScreen(context, gradeState);
       case 2:
         return HomeScreen(gradeId: _gradeIdFrom(gradeState));
       case 3:
@@ -165,11 +162,43 @@ class MainNavigationScreen extends StatelessWidget {
     };
   }
 
+  Widget _buildStudyNotesScreen(
+    BuildContext context,
+    StudentGradeSyncState gradeState,
+  ) {
+    return switch (gradeState) {
+      StudentGradeSyncSuccess() => const StudyNotesScreen(),
+      StudentGradeSyncFailure(:final error) => BackgroundStudentLayout(
+        child: SafeArea(
+          bottom: false,
+          child: AppErrorState(
+            message: error.message,
+            onRetry: context.read<StudentGradeSyncCubit>().retry,
+          ),
+        ),
+      ),
+      StudentGradeSyncInitial() ||
+      StudentGradeSyncLoading() => const BackgroundStudentLayout(
+        child: Center(
+          child: AppLoadingIndicator(
+            color: ColorPalette.primary,
+            size: 34,
+            strokeWidth: 4,
+            wavelength: 16,
+            waveSpeed: 10,
+          ),
+        ),
+      ),
+    };
+  }
+
   String _screenKey({
     required int index,
     required StudentGradeSyncState gradeState,
   }) {
-    if (index != _examsScreenIndex && index != 3) return index.toString();
+    if (index != _examsScreenIndex && index != 3 && index != 1) {
+      return index.toString();
+    }
 
     return switch (gradeState) {
       StudentGradeSyncSuccess(:final gradeId) => '$index-${gradeId.trim()}',
