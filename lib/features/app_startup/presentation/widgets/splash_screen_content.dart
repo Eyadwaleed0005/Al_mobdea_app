@@ -35,8 +35,8 @@ class SplashScreenContent extends StatelessWidget {
       case AppStartupNavigateToLogin():
         _navigateToLogin(context);
 
-      case AppStartupNavigateToHome():
-        _navigateToHome(context);
+      case AppStartupNavigateToHome homeState:
+        _navigateToHome(context, gradeId: homeState.gradeId);
 
       case AppStartupUpdateRequired updateState:
         unawaited(
@@ -61,10 +61,11 @@ class SplashScreenContent extends StatelessWidget {
     ).pushNamedAndRemoveUntil(RouteNames.loginScreen, (route) => false);
   }
 
-  void _navigateToHome(BuildContext context) {
+  void _navigateToHome(BuildContext context, {required String gradeId}) {
     Navigator.of(context).pushNamedAndRemoveUntil(
       RouteNames.mainNavigationScreen,
       (route) => false,
+      arguments: gradeId,
     );
   }
 

@@ -1,6 +1,8 @@
 import 'package:al_mobdea/app/routes/screen_routes/feature/app_startup_routes.dart';
 import 'package:al_mobdea/app/routes/screen_routes/feature/authentication_routes.dart';
 import 'package:al_mobdea/app/routes/screen_routes/feature/home_routes.dart';
+import 'package:al_mobdea/app/routes/screen_routes/feature/live_session_routes.dart';
+import 'package:al_mobdea/app/routes/screen_routes/feature/main_navigation_routes.dart';
 import 'package:flutter/material.dart';
 
 abstract final class AppRoutes {
@@ -9,7 +11,9 @@ abstract final class AppRoutes {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     return AppStartupRoutes.generateRoute(settings) ??
         HomeRoutes.generateRoute(settings) ??
+        MainNavigationRoutes.generateRoute(settings) ??
         AuthenticationRoutes.generateRoute(settings) ??
+        LiveSessionRoutes.generateRoute(settings) ??
         _buildUnknownRoute(settings);
   }
 
