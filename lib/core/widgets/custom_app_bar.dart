@@ -8,6 +8,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.title,
     this.titleColor,
+    this.titleBackgroundColor,
     this.backButtonColor,
     this.titleWidget,
     this.actions,
@@ -28,6 +29,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final String? title;
   final Color? titleColor;
+  final Color? titleBackgroundColor;
   final Color? backButtonColor;
   final Widget? titleWidget;
   final List<Widget>? actions;
@@ -123,18 +125,37 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       return titleWidget;
     }
 
-    return Text(
+    final titleText = Text(
       normalizedTitle,
       maxLines: isLandscape ? 1 : 2,
       softWrap: !isLandscape,
       overflow: TextOverflow.clip,
       textAlign: TextAlign.center,
       textDirection: TextDirection.rtl,
-      style: AppTextStyle.font18TextPrimarySemiBoldKufam().copyWith(
-        color: titleColor,
-        fontSize: 18,
-        height: isLandscape ? 1.2 : 1.35,
+      style: titleBackgroundColor == null
+          ? AppTextStyle.font18TextPrimarySemiBoldKufam().copyWith(
+              color: titleColor,
+              fontSize: 18,
+              height: isLandscape ? 1.2 : 1.35,
+            )
+          : AppTextStyle.font22TextLightBoldKufam().copyWith(
+              color: titleColor ?? ColorPalette.textLight,
+            ),
+    );
+
+    if (titleBackgroundColor == null) {
+      return titleText;
+    }
+
+    return Container(
+      width: 138.w,
+      height: 44.h,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: titleBackgroundColor,
+        borderRadius: BorderRadius.circular(28.r),
       ),
+      child: titleText,
     );
   }
 }

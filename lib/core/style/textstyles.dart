@@ -45,6 +45,15 @@ class AppTextStyle {
     );
   }
 
+  static TextStyle font22TextLightBoldKufam() {
+    return TextStyle(
+      fontSize: 22.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: kufam,
+      color: ColorPalette.textLight,
+    );
+  }
+
   static TextStyle font20TextPrimarySemiBoldKufam() {
     return TextStyle(
       fontSize: 20.sp,
@@ -60,6 +69,70 @@ class AppTextStyle {
       fontWeight: FontWeightHelper.regular,
       fontFamily: tajawal,
       color: ColorPalette.textSecondary,
+    );
+  }
+
+  static TextStyle font15TextSecondaryRegularTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.regular,
+      fontFamily: tajawal,
+      color: ColorPalette.textSecondary,
+    );
+  }
+
+  static TextStyle font12TextSecondaryRegularTajawal() {
+    return TextStyle(
+      fontSize: 12.sp,
+      fontWeight: FontWeightHelper.regular,
+      fontFamily: tajawal,
+      color: ColorPalette.textSecondary,
+    );
+  }
+
+  static TextStyle font13Gold300SemiBoldTajawal() {
+    return TextStyle(
+      fontSize: 13.sp,
+      fontWeight: FontWeightHelper.semiBold,
+      fontFamily: tajawal,
+      color: ColorPalette.gold300,
+    );
+  }
+
+  static TextStyle font14Gold300MediumTajawal() {
+    return TextStyle(
+      fontSize: 14.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.gold300,
+    );
+  }
+
+  static TextStyle font15CreamBoldKufam() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: kufam,
+      color: ColorPalette.cream50,
+    );
+  }
+
+  static TextStyle font14CreamRegularTajawal() {
+    return TextStyle(
+      fontSize: 14.sp,
+      fontWeight: FontWeightHelper.regular,
+      fontFamily: tajawal,
+      color: ColorPalette.cream50,
+    );
+  }
+
+  static TextStyle font12Wine600BoldTajawal() {
+    return TextStyle(
+      fontSize: 12.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: tajawal,
+      color: ColorPalette.wine600,
+      height: 1,
     );
   }
 
@@ -234,6 +307,15 @@ class AppTextStyle {
     );
   }
 
+  static TextStyle font23TextDarkBoldKufam() {
+    return TextStyle(
+      fontSize: 23.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: kufam,
+      color: ColorPalette.textDark,
+    );
+  }
+
   static TextStyle font18TextDarkBoldKufam() {
     return TextStyle(
       fontSize: 18.sp,
@@ -369,11 +451,20 @@ class AppTextStyle {
     );
   }
 
-  static TextStyle font14TextPrimaryMediumTajawal() {
+  static TextStyle font16TextPrimaryMediumTajawal() {
+    return TextStyle(
+      fontSize: 16.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.textPrimary,
+    );
+  }
+
+  static TextStyle font14TextPrimaryMediumKufam() {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: tajawal,
+      fontFamily: kufam,
       color: ColorPalette.textPrimary,
     );
   }

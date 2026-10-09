@@ -22,7 +22,8 @@ class AppImage {
   late final String homeIcon = '${baseIcons}home.svg';
   late final String search = '${baseIcons}Search.svg';
   late final String exam = '${baseIcons}exam.svg';
-  late final String lessons = '${baseIcons}Lessons.svg';
+  late final String lessons = '${baseIcons}lessons.svg';
   late final String studyNotes = '${baseIcons}study_notes.svg';
   late final String profile = '${baseIcons}profile.svg';
+  late final String notifications = '${baseIcons}notifications.svg';
 }
