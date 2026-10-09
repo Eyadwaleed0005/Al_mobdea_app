@@ -1,5 +1,6 @@
 import 'package:al_mobdea/app/routes/screen_routes/route_names.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
+import 'package:al_mobdea/features/lesson_quiz/presentation/screens/lesson_quiz_screen.dart';
 import 'package:al_mobdea/features/lessons/domain/entities/lesson_entity.dart';
 import 'package:al_mobdea/features/lessons/presentation/screens/lesson_details_screen.dart';
 import 'package:al_mobdea/features/lessons/presentation/screens/lesson_pdf_reader_screen.dart';
@@ -31,17 +32,13 @@ abstract final class LessonsRoutes {
           builder: (_) => LessonPdfReaderScreen(lesson: lesson),
         );
       case RouteNames.lessonQuiz:
+        final lessonId = settings.arguments;
+        if (lessonId is! String || lessonId.trim().isEmpty) {
+          return _invalidRoute(settings);
+        }
         return MaterialPageRoute<void>(
           settings: settings,
-          builder: (_) => Scaffold(
-            body: Center(
-              child: Text(
-                'الاختبار غير متاح حاليًا',
-                textDirection: TextDirection.rtl,
-                style: AppTextStyle.font20TextPrimarySemiBoldKufam(),
-              ),
-            ),
-          ),
+          builder: (_) => LessonQuizScreen(lessonId: lessonId),
         );
       default:
         return null;

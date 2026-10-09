@@ -5,13 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-class CurvedAppBar extends StatelessWidget {
-  const CurvedAppBar({super.key, required this.title});
+class CurvedAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CurvedAppBar({super.key, required this.title, this.onBack, this.showBackButton = true});
 
   final String title;
+  final VoidCallback? onBack;
+  final bool showBackButton;
+
+  @override
+  Size get preferredSize => Size.fromHeight(80.h);
 
   @override
   Widget build(BuildContext context) {
+    final bool canPop = Navigator.of(context).canPop();
+
+    final bool shouldShowBack = showBackButton && canPop;
     return SizedBox(
       height: 80.h,
       child: CustomPaint(
@@ -22,12 +30,14 @@ class CurvedAppBar extends StatelessWidget {
             textDirection: TextDirection.ltr,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                padding: EdgeInsets.only(top: 20.h, left: 20.w),
-                constraints: BoxConstraints(),
-                onPressed: () => Navigator.of(context).pop(),
-                icon: SvgPicture.asset(AppImage().arrowBack, height: 10.h, width: 10.w),
-              ),
+              shouldShowBack
+                  ? IconButton(
+                      padding: EdgeInsets.only(top: 20.h, left: 20.w),
+                      constraints: const BoxConstraints(),
+                      onPressed: onBack ?? () => Navigator.of(context).pop(),
+                      icon: SvgPicture.asset(AppImage().arrowBack, height: 10.h, width: 10.w),
+                    )
+                  : SizedBox(height: 10.h, width: 10.w),
               Flexible(
                 child: Text(
                   title,
