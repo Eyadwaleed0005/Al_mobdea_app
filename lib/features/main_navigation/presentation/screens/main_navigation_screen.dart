@@ -5,6 +5,7 @@ import 'package:al_mobdea/core/style/textstyles.dart';
 import 'package:al_mobdea/core/widgets/app_error_state.dart';
 import 'package:al_mobdea/core/widgets/app_loading_indicator.dart';
 import 'package:al_mobdea/core/widgets/background/background_student_layout.dart';
+import 'package:al_mobdea/features/exams/presentation/screens/exams_screen.dart';
 import 'package:al_mobdea/features/home/presentation/screens/home_screen.dart';
 import 'package:al_mobdea/features/lessons/presentation/screens/lessons_screen.dart';
 import 'package:al_mobdea/features/study_notes/presentation/screens/study_notes_screen.dart';
@@ -92,22 +93,19 @@ class MainNavigationScreen extends StatelessWidget {
       case 3:
         return _buildLessonsScreen(context, gradeState);
       case _examsScreenIndex:
-        return _buildExamsPlaceholder(context, gradeState);
+        return _buildExamsScreen(context, gradeState);
       default:
         return HomeScreen(gradeId: _gradeIdFrom(gradeState));
     }
   }
 
-  Widget _buildExamsPlaceholder(
+  Widget _buildExamsScreen(
     BuildContext context,
     StudentGradeSyncState gradeState,
   ) {
     return switch (gradeState) {
-      StudentGradeSyncSuccess() => const _NavigationPlaceholderScreen(
-        title: 'الامتحانات',
-        description: 'ستظهر امتحانات صفك هنا عند إضافة صفحة الامتحانات.',
-        icon: Icons.assignment_outlined,
-      ),
+      StudentGradeSyncSuccess(:final gradeId) =>
+        ExamsScreen(gradeId: gradeId),
       StudentGradeSyncFailure(:final error) => BackgroundStudentLayout(
         child: SafeArea(
           bottom: false,

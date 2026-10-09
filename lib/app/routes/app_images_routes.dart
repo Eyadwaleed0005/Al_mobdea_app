@@ -31,4 +31,5 @@ class AppImage {
   late final String arrowBack = '${baseIcons}arrow_back.svg';
   late final String kuficLogo = '${baseIcons}kufic.svg';
   late final String emptyNotes = '${baseIcons}empty_notes.svg';
+  late final String emptyExams = '${baseIcons}empty_exams.svg';
 }

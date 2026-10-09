@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CurvedAppBar extends StatelessWidget {
-  const new({super.key, required this.title});
+  const CurvedAppBar({super.key, required this.title});
 
   final String title;
 

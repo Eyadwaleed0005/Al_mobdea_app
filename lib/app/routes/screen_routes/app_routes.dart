@@ -1,5 +1,6 @@
 import 'package:al_mobdea/app/routes/screen_routes/feature/app_startup_routes.dart';
 import 'package:al_mobdea/app/routes/screen_routes/feature/authentication_routes.dart';
+import 'package:al_mobdea/app/routes/screen_routes/feature/exams_routes.dart';
 import 'package:al_mobdea/app/routes/screen_routes/feature/home_routes.dart';
 import 'package:al_mobdea/app/routes/screen_routes/feature/live_session_routes.dart';
 import 'package:al_mobdea/app/routes/screen_routes/feature/lessons_routes.dart';
@@ -18,6 +19,7 @@ abstract final class AppRoutes {
         LiveSessionRoutes.generateRoute(settings) ??
         LessonsRoutes.generateRoute(settings) ??
         StudyNotesRoutes.generateRoute(settings) ??
+        ExamsRoutes.generateRoute(settings) ??
         _buildUnknownRoute(settings);
   }
 
@@ -37,3 +39,4 @@ abstract final class AppRoutes {
     );
   }
 }
+
