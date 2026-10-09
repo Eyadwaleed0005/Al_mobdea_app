@@ -6,8 +6,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppTextStyle {
   const AppTextStyle._();
 
-  static const String alexandria = 'Alexandria';
+  static const String tajawal = 'Tajawal';
   static const String kufam = 'Kufam';
+
+  static TextStyle font16TextLightMediumTajawal() {
+    return TextStyle(
+      fontSize: 16.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.textLight,
+    );
+  }
 
   static TextStyle font15TextLightSemiBoldKufam() {
     return TextStyle(
@@ -22,7 +31,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 20.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textLight,
     );
   }
@@ -40,17 +49,16 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textSecondary,
     );
   }
 
-  //will change to textOceanBlue in lesson exam
   static TextStyle font13TextPrimaryMediumTajawal() {
     return TextStyle(
       fontSize: 13.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textPrimary,
     );
   }
@@ -59,7 +67,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 15.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textMuted,
     );
   }
@@ -68,7 +76,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 13.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.primary,
     );
   }
@@ -77,7 +85,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 15.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textBlack,
     );
   }
@@ -86,7 +94,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 15.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.surface,
     );
   }
@@ -95,7 +103,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 15.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textPrimary,
     );
   }
@@ -104,7 +112,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 15.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textLight,
     );
   }
@@ -113,7 +121,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 15.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.primary,
     );
   }
@@ -122,7 +130,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 13.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textSecondary,
     );
   }
@@ -140,7 +148,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 18.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textLight,
     );
   }
@@ -176,7 +184,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 11.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textHighLight,
     );
   }
@@ -185,7 +193,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 11.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textSoftSaga,
     );
   }
@@ -212,7 +220,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textBlack,
     );
   }
@@ -230,7 +238,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textSecondary,
     );
   }
@@ -239,7 +247,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textMuted,
     );
   }
@@ -248,7 +256,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.primary,
     );
   }
@@ -257,7 +265,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.primary,
     );
   }
@@ -275,17 +283,16 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 13.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.primary,
     );
   }
 
-  //change color to textRed if needed
   static TextStyle font14TextLightBoldTajawal() {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textLight,
     );
   }
@@ -303,7 +310,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 29.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textPrimary,
     );
   }
@@ -312,7 +319,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textSecondary,
     );
   }
@@ -321,7 +328,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 11.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textSecondary,
     );
   }
@@ -330,7 +337,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 13.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textOceanBlue,
     );
   }
@@ -339,7 +346,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 11.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textHighLight,
     );
   }
@@ -348,7 +355,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 11.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.error,
     );
   }
@@ -366,7 +373,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textSoftSaga,
     );
   }
@@ -375,7 +382,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textLight,
     );
   }
@@ -384,7 +391,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 13.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textHighLight,
     );
   }
@@ -393,7 +400,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textPrimary,
     );
   }
@@ -411,7 +418,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textRed,
     );
   }
@@ -420,7 +427,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.regular,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.error,
     );
   }
@@ -429,7 +436,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 15.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.error,
     );
   }
@@ -438,7 +445,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.semiBold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.error,
     );
   }
@@ -456,7 +463,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.medium,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textPrimary,
     );
   }
@@ -465,7 +472,7 @@ class AppTextStyle {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.bold,
-      fontFamily: alexandria,
+      fontFamily: tajawal,
       color: ColorPalette.textPrimary,
     );
   }
