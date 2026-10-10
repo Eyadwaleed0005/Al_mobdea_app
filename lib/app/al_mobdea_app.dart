@@ -5,6 +5,8 @@ import 'package:al_mobdea/core/connection/cubit/network_status_cubit.dart';
 import 'package:al_mobdea/core/services/device_preview_service.dart';
 import 'package:al_mobdea/features/exams/domain/validation/pending_exam_submissions_sync_handler.dart';
 import 'package:al_mobdea/features/exams/presentation/cubit/pending_exam_submissions_sync_cubit.dart';
+import 'package:al_mobdea/features/notifications/presentation/cubit/notification_cubit.dart';
+import 'package:al_mobdea/features/notifications/presentation/services/notification_navigation_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,12 +20,11 @@ class AlMobdeaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        // TODO: uncomment when firebase is initialized
-        //   BlocProvider<NotificationCubit>(
-        //   create: (_) {
-        //     return getIt<NotificationCubit>()..initialize();
-        //   },
-        // ),
+        BlocProvider<NotificationCubit>(
+          create: (_) {
+            return getIt<NotificationCubit>()..initialize();
+          },
+        ),
         BlocProvider<NetworkStatusCubit>(
           create: (_) {
             return getIt<NetworkStatusCubit>()..startMonitoring();
@@ -46,7 +47,7 @@ class AlMobdeaApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             locale: DevicePreviewService.locale(context),
             theme: ThemeData(),
-            initialRoute: RouteNames.mainNavigationScreen,
+            initialRoute: RouteNames.splashScreen,
             onGenerateRoute: AppRoutes.generateRoute,
             builder: _buildApp,
           );
@@ -59,11 +60,10 @@ class AlMobdeaApp extends StatelessWidget {
     final Widget previewedChild = DevicePreviewService.appBuilder(context, child);
 
     return PendingExamSubmissionsSyncHandler(
-      // TODO: uncomment when firebase is initialized
-      // child: NotificationNavigationHandler(
-      // navigatorKey: navigatorKey,
-      child: previewedChild,
-      // ),
+      child: NotificationNavigationHandler(
+        navigatorKey: navigatorKey,
+        child: previewedChild,
+      ),
     );
   }
 }
