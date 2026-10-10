@@ -1,6 +1,5 @@
 import 'package:al_mobdea/core/firebase/firestore/firestore_service.dart';
 import 'package:al_mobdea/core/firebase/storage/storage_service.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 // Local data sources
 import 'package:al_mobdea/features/study_notes/data/data_sources/local_data_source/secure_study_note_pdf_cache_local_data_source.dart';
@@ -11,7 +10,6 @@ import 'package:al_mobdea/features/study_notes/data/data_sources/local_data_sour
 // Remote data sources
 import 'package:al_mobdea/features/study_notes/data/data_sources/remote_data_source/firebase_study_note_pdf_remote_data_source.dart';
 import 'package:al_mobdea/features/study_notes/data/data_sources/remote_data_source/firebase_study_notes_remote_data_source.dart';
-import 'package:al_mobdea/features/study_notes/data/data_sources/remote_data_source/preview_study_notes_remote_data_source.dart';
 import 'package:al_mobdea/features/study_notes/data/data_sources/remote_data_source/study_note_pdf_remote_data_source.dart';
 import 'package:al_mobdea/features/study_notes/data/data_sources/remote_data_source/study_notes_remote_data_source.dart';
 
@@ -55,8 +53,6 @@ void _registerLocalDataSources(GetIt getIt) {
 void _registerRemoteDataSources(GetIt getIt) {
   getIt.registerLazySingleton<StudyNotesRemoteDataSource>(
     () {
-      // TODO: remove this line when firebase is initialized
-      if (Firebase.apps.isEmpty) return const PreviewStudyNotesRemoteDataSource();
       return FirebaseStudyNotesRemoteDataSource(
         firestoreService: getIt<FirestoreService>(),
       );

@@ -8,7 +8,6 @@ import 'package:al_mobdea/features/lessons/data/data_source/remote/firebase_less
 import 'package:al_mobdea/features/lessons/data/data_source/remote/firebase_lessons_remote_data_source.dart';
 import 'package:al_mobdea/features/lessons/data/data_source/remote/lesson_pdf_remote_data_source.dart';
 import 'package:al_mobdea/features/lessons/data/data_source/remote/lessons_remote_data_source.dart';
-import 'package:al_mobdea/features/lessons/data/data_source/remote/preview_lessons_remote_data_source.dart';
 import 'package:al_mobdea/features/lessons/data/repositories/lesson_pdf_repository_impl.dart';
 import 'package:al_mobdea/features/lessons/data/repositories/lessons_repository_impl.dart';
 import 'package:al_mobdea/features/lessons/domain/repositories/lesson_pdf_repository.dart';
@@ -18,7 +17,6 @@ import 'package:al_mobdea/features/lessons/domain/use_cases/get_lesson_pdf_use_c
 import 'package:al_mobdea/features/lessons/domain/use_cases/stream_lessons_use_case.dart';
 import 'package:al_mobdea/features/lessons/presentation/cubit/lesson_pdf_cubit.dart';
 import 'package:al_mobdea/features/lessons/presentation/cubit/lessons_cubit.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 
 void registerLessonsDependencies(GetIt getIt) {
@@ -26,9 +24,7 @@ void registerLessonsDependencies(GetIt getIt) {
   getIt.registerLazySingleton<LessonPdfCacheLocalDataSource>(
     () => const SecureLessonPdfCacheLocalDataSource(),
   );
-  getIt.registerLazySingleton<LessonsRemoteDataSource>(() {
-    // TODO: remove this line when firebase is initialized
-    if (Firebase.apps.isEmpty) return const PreviewLessonsRemoteDataSource();
+  getIt.registerLazySingleton<LessonsRemoteDataSource>(() { 
     return FirebaseLessonsRemoteDataSource(firestoreService: getIt<FirestoreService>());
   });
   getIt.registerLazySingleton<LessonPdfRemoteDataSource>(

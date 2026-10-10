@@ -1,7 +1,6 @@
 import 'package:al_mobdea/features/exams/data/data_source/cache/exam_attempt_cache_data_source.dart';
 import 'package:al_mobdea/features/exams/data/data_source/cache/shared_preferences_exam_attempt_cache_data_source.dart';
 import 'package:al_mobdea/features/exams/data/data_source/remote/firebase_student_exams_remote_data_source.dart';
-import 'package:al_mobdea/features/exams/data/data_source/remote/preview_student_exams_remote_data_source.dart';
 import 'package:al_mobdea/features/exams/data/data_source/remote/student_exams_remote_data_source.dart';
 import 'package:al_mobdea/features/exams/data/repositories/exam_attempt_cache_repository_impl.dart';
 import 'package:al_mobdea/features/exams/data/repositories/student_exams_repository_impl.dart';
@@ -25,7 +24,6 @@ import 'package:al_mobdea/features/exams/presentation/cubit/start_exam_screen_cu
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 
 void registerExamsDependencies(GetIt getIt) {
@@ -37,10 +35,6 @@ void registerExamsDependencies(GetIt getIt) {
 
 void _registerDataSources(GetIt getIt) {
   getIt.registerLazySingleton<StudentExamsRemoteDataSource>(() {
-    // TODO: remove this branch when firebase is initialized
-    if (Firebase.apps.isEmpty) {
-      return PreviewStudentExamsRemoteDataSource();
-    }
     return FirebaseStudentExamsRemoteDataSource(
       firestore: getIt<FirebaseFirestore>(),
       functions: getIt<FirebaseFunctions>(),

@@ -19,14 +19,14 @@ class FlutterLocalNotificationDataSource implements LocalNotificationDataSource 
 
   static const String _notificationIcon = 'ic_notification';
 
-  static const Color _notificationColor = Color(0xFF023A22);
+  static const Color _notificationColor = Color(0xFF5B111D);
 
   static const RawResourceAndroidNotificationSound _notificationSound =
-      RawResourceAndroidNotificationSound('al_waleed_notification');
+      RawResourceAndroidNotificationSound('al_mobdea_notification');
 
   static const AndroidNotificationChannel _androidChannel = AndroidNotificationChannel(
     channelId,
-    'إشعارات منصة الوليد',
+    'إشعارات منصة المبدع',
     description: 'إشعارات الدروس والمذكرات والامتحانات والبث المباشر',
     importance: Importance.max,
     playSound: true,
@@ -35,7 +35,7 @@ class FlutterLocalNotificationDataSource implements LocalNotificationDataSource 
   );
 
   @override
-  Future<void> initialize() async {
+  Future<void> initialize({bool requestPermission = true}) async {
     const initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings(_notificationIcon),
       iOS: DarwinInitializationSettings(
@@ -51,11 +51,17 @@ class FlutterLocalNotificationDataSource implements LocalNotificationDataSource 
     );
 
     final androidNotificationsPlugin = _localNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
-    await androidNotificationsPlugin?.createNotificationChannel(_androidChannel);
+    await androidNotificationsPlugin?.createNotificationChannel(
+      _androidChannel,
+    );
 
-    await androidNotificationsPlugin?.requestNotificationsPermission();
+    if (requestPermission) {
+      await androidNotificationsPlugin?.requestNotificationsPermission();
+    }
   }
 
   @override
@@ -63,10 +69,11 @@ class FlutterLocalNotificationDataSource implements LocalNotificationDataSource 
     const notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
         channelId,
-        'إشعارات منصة الوليد',
+        'إشعارات منصة المبدع',
         channelDescription: 'إشعارات الدروس والمذكرات والامتحانات والبث المباشر',
         icon: _notificationIcon,
         color: _notificationColor,
+        largeIcon: DrawableResourceAndroidBitmap('al_mobdea_logo'),
         importance: Importance.max,
         priority: Priority.high,
         playSound: true,
