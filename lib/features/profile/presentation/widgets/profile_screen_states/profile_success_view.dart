@@ -29,11 +29,20 @@ class ProfileSuccessView extends StatelessWidget {
           verticalSpace(12),
           AppAnimations.screenSection(delay: 100, child: _buildHeader()),
           verticalSpace(20),
-          AppAnimations.screenSection(delay: 250, child: ProfileStudentCard(profile: profile)),
+          AppAnimations.screenSection(
+            delay: 250,
+            child: ProfileStudentCard(profile: profile),
+          ),
           verticalSpace(28),
-          AppAnimations.screenSection(delay: 450, child: ProfileInfoTitle(title: 'معلوماتي')),
+          AppAnimations.screenSection(
+            delay: 450,
+            child: ProfileInfoTitle(title: 'معلوماتي'),
+          ),
           verticalSpace(12),
-          AppAnimations.screenSection(delay: 550, child: ProfileInfoCard(profile: profile)),
+          AppAnimations.screenSection(
+            delay: 550,
+            child: ProfileInfoCard(profile: profile),
+          ),
           verticalSpace(24),
           AppAnimations.screenSection(
             delay: 650,

@@ -1,14 +1,10 @@
-import 'package:al_mobdea/app/routes/app_images_routes.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({super.key, required this.onNotificationPressed});
-
-  final VoidCallback onNotificationPressed;
+  const HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +22,7 @@ class HomeHeader extends StatelessWidget {
               toolbarHeight: 48.h,
             ),
           ),
-          Align(
+          /* Align(
             alignment: Alignment.centerLeft,
             child: Semantics(
               button: true,
@@ -45,12 +41,16 @@ class HomeHeader extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: ColorPalette.border, width: 1),
                     ),
-                    child: SvgPicture.asset(AppImage().notifications, width: 21.w, height: 22.w),
+                    child: SvgPicture.asset(
+                      AppImage().notifications,
+                      width: 21.w,
+                      height: 22.w,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          ), */
         ],
       ),
     );

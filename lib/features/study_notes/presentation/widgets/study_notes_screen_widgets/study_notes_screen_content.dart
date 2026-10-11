@@ -22,84 +22,76 @@ class StudyNotesScreenContent extends StatelessWidget {
     return BackgroundStudentLayout(
       child: SafeArea(
         bottom: false,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            children: [
-              verticalSpace(10),
-              CustomAppBar(
-                titleWidget: Container(
-                  width: 168.w,
-                  height: 44.h,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: ColorPalette.primary,
-                    borderRadius: BorderRadius.circular(28.r),
+        child: BlocBuilder<StudyNotesCubit, StudyNotesState>(
+          builder: (context, state) {
+            if (state is StudyNotesEmpty) {
+              return _buildHeaderColumn(
+                children: [const Expanded(child: StudyNotesEmptyView())],
+              );
+            }
+            if (state is StudyNotesFailure) {
+              return _buildHeaderColumn(
+                children: [
+                  Expanded(
+                    child: StudyNotesErrorView(
+                      errorMessage: state.error.message,
+                      onRetry: context.read<StudyNotesCubit>().retry,
+                    ),
                   ),
-                  child: Text(
-                    'المذكرات',
-                    textDirection: TextDirection.rtl,
-                    style: AppTextStyle.font22TextLightBoldKufam(),
-                  ),
-                ),
-                backgroundColor: ColorPalette.background.withValues(alpha: 0),
-                showBackButton: false,
-                toolbarHeight: 56.h,
-              ),
-              Expanded(
-                child: BlocBuilder<StudyNotesCubit, StudyNotesState>(
-                  builder: (context, state) {
-                    if (state is StudyNotesEmpty) {
-                      return const StudyNotesEmptyView();
-                    }
-                    if (state is StudyNotesFailure) {
-                      return Column(
-                        children: [
-                          verticalSpace(14),
-                          _buildSubtitle(),
-                          verticalSpace(14),
-                          Expanded(
-                            child: StudyNotesErrorView(
-                              errorMessage: state.error.message,
-                              onRetry: context.read<StudyNotesCubit>().retry,
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    if (state is StudyNotesSuccess) {
-                      return Column(
-                        children: [
-                          verticalSpace(14),
-                          _buildSubtitle(),
-                          verticalSpace(14),
-                          Expanded(
-                            child: StudyNotesListView(
-                              notes: state.notes,
-                              onNoteTap: (note) {
-                                Navigator.of(
-                                  context,
-                                ).pushNamed(RouteNames.studyNotePdfReaderScreen, arguments: note);
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return Column(
-                      children: [
-                        verticalSpace(14),
-                        _buildSubtitle(),
-                        verticalSpace(14),
-                        const Expanded(child: StudyNotesLoadingSkeleton()),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+                ],
+              );
+            }
+            if (state is StudyNotesSuccess) {
+              return StudyNotesListView(
+                notes: state.notes,
+                onNoteTap: (note) {
+                  Navigator.of(context).pushNamed(
+                    RouteNames.studyNotePdfReaderScreen,
+                    arguments: note,
+                  );
+                },
+              );
+            }
+            // Loading / initial state
+            return _buildHeaderColumn(
+              children: [const Expanded(child: StudyNotesLoadingSkeleton())],
+            );
+          },
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderColumn({required List<Widget> children}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        children: [
+          verticalSpace(10),
+          CustomAppBar(
+            titleWidget: Container(
+              width: 168.w,
+              height: 44.h,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: ColorPalette.primary,
+                borderRadius: BorderRadius.circular(28.r),
+              ),
+              child: Text(
+                'المذكرات',
+                textDirection: TextDirection.rtl,
+                style: AppTextStyle.font22TextLightBoldKufam(),
+              ),
+            ),
+            backgroundColor: ColorPalette.background.withValues(alpha: 0),
+            showBackButton: false,
+            toolbarHeight: 56.h,
+          ),
+          verticalSpace(14),
+          _buildSubtitle(),
+          verticalSpace(14),
+          ...children,
+        ],
       ),
     );
   }

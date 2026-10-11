@@ -26,63 +26,75 @@ class ExamsScreenContent extends StatelessWidget {
     return BackgroundStudentLayout(
       child: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            verticalSpace(10),
-            CustomAppBar(
-              titleWidget: Container(
-                width: 180.w,
-                height: 48.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: ColorPalette.primary,
-                  borderRadius: BorderRadius.circular(28.r),
-                ),
-                child: Text(
-                  'الامتحان الحالي',
-                  textDirection: TextDirection.rtl,
-                  style: AppTextStyle.font22TextLightBoldKufam(),
-                ),
-              ),
-              backgroundColor: ColorPalette.background.withValues(alpha: 0),
-              showBackButton: false,
-              toolbarHeight: 56.h,
-            ),
-            verticalSpace(12),
-            Text(
-              'اختبر نفسك وراقب تقدمك',
-              textDirection: TextDirection.rtl,
-              style: AppTextStyle.font14TextSecondaryRegularTajawal(),
-            ),
-            verticalSpace(16),
-            Expanded(
-              child: BlocConsumer<ExamsScreenCubit, ExamsScreenState>(
-                listenWhen: (previous, current) {
-                  return current is ExamsScreenActionFailure || current is ExamsScreenSessionReady;
-                },
-                listener: _handleStateListener,
-                builder: _buildState,
-              ),
-            ),
-          ],
+        child: BlocConsumer<ExamsScreenCubit, ExamsScreenState>(
+          listenWhen: (previous, current) {
+            return current is ExamsScreenActionFailure || current is ExamsScreenSessionReady;
+          },
+          listener: _handleStateListener,
+          builder: _buildState,
         ),
       ),
     );
   }
 
+  Widget _buildHeaderColumn({required List<Widget> children}) {
+    return Column(
+      children: [
+        verticalSpace(10),
+        CustomAppBar(
+          titleWidget: Container(
+            width: 180.w,
+            height: 48.h,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: ColorPalette.primary,
+              borderRadius: BorderRadius.circular(28.r),
+            ),
+            child: Text(
+              'الامتحان الحالي',
+              textDirection: TextDirection.rtl,
+              style: AppTextStyle.font22TextLightBoldKufam(),
+            ),
+          ),
+          backgroundColor: ColorPalette.background.withValues(alpha: 0),
+          showBackButton: false,
+          toolbarHeight: 56.h,
+        ),
+        verticalSpace(12),
+        Text(
+          'اختبر نفسك وراقب تقدمك',
+          textDirection: TextDirection.rtl,
+          style: AppTextStyle.font14TextSecondaryRegularTajawal(),
+        ),
+        verticalSpace(16),
+        ...children,
+      ],
+    );
+  }
+
   Widget _buildState(BuildContext context, ExamsScreenState state) {
     if (state is ExamsScreenInitial || state is ExamsScreenLoading) {
-      return const ExamsScreenLoadingView();
+      return _buildHeaderColumn(
+        children: [const Expanded(child: ExamsScreenLoadingView())],
+      );
     }
 
     if (state is ExamsScreenEmpty) {
-      return const ExamsScreenEmptyView();
+      return _buildHeaderColumn(
+        children: [const Expanded(child: ExamsScreenEmptyView())],
+      );
     }
 
     if (state is ExamsScreenFailure) {
-      return AppErrorState(
-        message: state.error.message,
-        onRetry: context.read<ExamsScreenCubit>().retryLoading,
+      return _buildHeaderColumn(
+        children: [
+          Expanded(
+            child: AppErrorState(
+              message: state.error.message,
+              onRetry: context.read<ExamsScreenCubit>().retryLoading,
+            ),
+          ),
+        ],
       );
     }
 
@@ -123,7 +135,9 @@ class ExamsScreenContent extends StatelessWidget {
       );
     }
 
-    return const ExamsScreenLoadingView();
+    return _buildHeaderColumn(
+      children: [const Expanded(child: ExamsScreenLoadingView())],
+    );
   }
 
   void _handleStateListener(BuildContext context, ExamsScreenState state) {

@@ -5,6 +5,7 @@ import 'package:al_mobdea/core/style/app_animations.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
 import 'package:al_mobdea/core/widgets/app_loading_indicator.dart';
+import 'package:al_mobdea/core/widgets/custom_app_bar.dart';
 import 'package:al_mobdea/core/widgets/custom_button.dart';
 import 'package:al_mobdea/features/exams/domain/entities/student_exam_list_item_entity.dart';
 import 'package:al_mobdea/features/exams/presentation/widgets/exams_screen_widgets/current_exam_widgets/available_exam_card.dart';
@@ -105,11 +106,50 @@ class _AvailableExamsListViewState extends State<AvailableExamsListView> {
 
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-      itemCount: widget.exams.length,
-      separatorBuilder: (_, _) => verticalSpace(24),
+      padding: EdgeInsets.only(bottom: 112.h),
+      itemCount: widget.exams.length + 1,
+      separatorBuilder: (_, index) =>
+          index == 0 ? const SizedBox.shrink() : verticalSpace(24),
       itemBuilder: (BuildContext context, int index) {
-        final examItem = widget.exams[index];
+        if (index == 0) {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              children: [
+                verticalSpace(10),
+                CustomAppBar(
+                  titleWidget: Container(
+                    width: 180.w,
+                    height: 48.h,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: ColorPalette.primary,
+                      borderRadius: BorderRadius.circular(28.r),
+                    ),
+                    child: Text(
+                      'الامتحان الحالي',
+                      textDirection: TextDirection.rtl,
+                      style: AppTextStyle.font22TextLightBoldKufam(),
+                    ),
+                  ),
+                  backgroundColor: ColorPalette.background.withValues(alpha: 0),
+                  showBackButton: false,
+                  toolbarHeight: 56.h,
+                ),
+                verticalSpace(12),
+                Text(
+                  'اختبر نفسك وراقب تقدمك',
+                  textDirection: TextDirection.rtl,
+                  style: AppTextStyle.font14TextSecondaryRegularTajawal(),
+                ),
+                verticalSpace(16),
+              ],
+            ),
+          );
+        }
+
+        final examIndex = index - 1;
+        final examItem = widget.exams[examIndex];
 
         final isOpening =
             widget.openingExamId?.trim() == examItem.exam.examId.trim();
@@ -128,94 +168,107 @@ class _AvailableExamsListViewState extends State<AvailableExamsListView> {
           shouldAutoSubmit: shouldAutoSubmit,
         );
         final buttonOpacity = isOpening || canPress ? 1.0 : 0.65;
-        final remainingDuration = _calculateClosingDuration(examItem, currentDate);
+        final remainingDuration = _calculateClosingDuration(
+          examItem,
+          currentDate,
+        );
         final countdownText = remainingDuration == null
             ? null
             : _formatClosingTime(remainingDuration);
 
-        return AppAnimations.screenSection(
-          delay: 150 + (index * 80),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-                decoration: BoxDecoration(
-                  color: ColorPalette.surface,
-                  borderRadius: BorderRadius.circular(24.r),
-                  border: Border.all(
-                    color: ColorPalette.borderWarm.withValues(alpha: 0.6),
-                    width: 1.w,
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: AppAnimations.screenSection(
+            delay: 150 + (examIndex * 80),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 24.h,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorPalette.cardShadow.withValues(alpha: 0.04),
-                      blurRadius: 16.r,
-                      offset: Offset(0, 4.h),
+                  decoration: BoxDecoration(
+                    color: ColorPalette.surface,
+                    borderRadius: BorderRadius.circular(24.r),
+                    border: Border.all(
+                      color: ColorPalette.borderWarm.withValues(alpha: 0.6),
+                      width: 1.w,
                     ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AvailableExamCard(exam: examItem.exam),
-                    verticalSpace(24),
-                    IgnorePointer(
-                      ignoring: !canPress,
-                      child: Opacity(
-                        opacity: buttonOpacity,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            CustomButton(
-                              text: isOpening ? '' : buttonText,
-                              textStyle: AppTextStyle.font16TextLightBoldTajawal(),
-                              onPressed: () {
-                                _handleExamPressed(examItem);
-                              },
-                              background: ColorPalette.primary,
-                              foreground: ColorPalette.textLight,
-                              height: 52.h,
-                              borderRadius: 30,
-                            ),
-                            if (isOpening)
-                              const Positioned.fill(
-                                child: Center(
-                                  child: AppLoadingIndicator(
-                                    color: ColorPalette.surface,
-                                    size: 24,
-                                    strokeWidth: 3,
-                                    wavelength: 12,
-                                    waveSpeed: 10,
+                    boxShadow: [
+                      BoxShadow(
+                        color: ColorPalette.cardShadow.withValues(alpha: 0.04),
+                        blurRadius: 16.r,
+                        offset: Offset(0, 4.h),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AvailableExamCard(exam: examItem.exam),
+                      verticalSpace(24),
+                      IgnorePointer(
+                        ignoring: !canPress,
+                        child: Opacity(
+                          opacity: buttonOpacity,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CustomButton(
+                                text: isOpening ? '' : buttonText,
+                                textStyle:
+                                    AppTextStyle.font16TextLightBoldTajawal(),
+                                onPressed: () {
+                                  _handleExamPressed(examItem);
+                                },
+                                background: ColorPalette.primary,
+                                foreground: ColorPalette.textLight,
+                                height: 52.h,
+                                borderRadius: 30,
+                              ),
+                              if (isOpening)
+                                const Positioned.fill(
+                                  child: Center(
+                                    child: AppLoadingIndicator(
+                                      color: ColorPalette.surface,
+                                      size: 24,
+                                      strokeWidth: 3,
+                                      wavelength: 12,
+                                      waveSpeed: 10,
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              if (countdownText != null) ...[
-                verticalSpace(14),
-                Center(
-                  child: Text(
-                    countdownText,
-                    textDirection: TextDirection.rtl,
-                    style: AppTextStyle.font14PrimaryMediumTajawal(),
+                    ],
                   ),
                 ),
+                if (countdownText != null) ...[
+                  verticalSpace(14),
+                  Center(
+                    child: Text(
+                      countdownText,
+                      textDirection: TextDirection.rtl,
+                      style: AppTextStyle.font14PrimaryMediumTajawal(),
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         );
       },
     );
   }
 
-  Duration? _calculateClosingDuration(StudentExamListItemEntity examItem, DateTime currentDate) {
+  Duration? _calculateClosingDuration(
+    StudentExamListItemEntity examItem,
+    DateTime currentDate,
+  ) {
     final attempt = examItem.attempt;
 
     if (attempt == null || !attempt.isInProgress) {

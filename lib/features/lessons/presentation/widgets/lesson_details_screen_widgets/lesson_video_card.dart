@@ -5,6 +5,8 @@ import 'package:al_mobdea/core/connection/cubit/network_status_state.dart';
 import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
+import 'package:al_mobdea/core/widgets/app_loading_indicator.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -242,42 +244,76 @@ class _LessonVideoCardState extends State<LessonVideoCard> {
       return _buildPlayer();
     }
 
-    return _buildPreview();
+    return _buildPreview(videoId);
   }
 
-  Widget _buildPreview() {
+  String _thumbnailUrl(String videoId) {
+    return 'https://img.youtube.com/vi/$videoId/hqdefault.jpg';
+  }
+
+  Widget _buildPreview(String videoId) {
     return GestureDetector(
+      key: const ValueKey<String>('video-thumbnail'),
       onTap: _activatePlayer,
-      child: ColoredBox(
-        color: ColorPalette.deepSurface,
-        child: Center(
-          child: Container(
-            width: 62.w,
-            height: 62.w,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: ColorPalette.gold200,
-            ),
-            child: Icon(
-              Icons.play_arrow_rounded,
-              size: 38.sp,
-              color: ColorPalette.wine700,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CachedNetworkImage(
+            imageUrl: _thumbnailUrl(videoId),
+            fit: BoxFit.cover,
+            placeholder: (context, imageUrl) {
+              return const ColoredBox(
+                color: ColorPalette.deepSurface,
+                child: Center(
+                  child: AppLoadingIndicator(
+                    color: ColorPalette.primary,
+                    size: 30,
+                    strokeWidth: 3,
+                    wavelength: 14,
+                    waveSpeed: 10,
+                  ),
+                ),
+              );
+            },
+            errorWidget: (context, imageUrl, error) {
+              return const ColoredBox(color: ColorPalette.deepSurface);
+            },
+          ),
+          Center(
+            child: Container(
+              width: 62.w,
+              height: 62.w,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: ColorPalette.gold200,
+              ),
+              child: Icon(
+                Icons.play_arrow_rounded,
+                size: 38.sp,
+                color: ColorPalette.wine700,
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildPlayer() {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: YoutubePlayer(
-        controller: _controller!,
-        aspectRatio: _aspectRatio,
-        backgroundColor: ColorPalette.deepSurface,
-        autoFullScreen: false,
-        enableFullScreenOnVerticalDrag: false,
+    return Theme(
+      data: Theme.of(context).copyWith(
+        colorScheme: Theme.of(context).colorScheme
+            .copyWith(primary: ColorPalette.primary),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: YoutubePlayer(
+          controller: _controller!,
+          aspectRatio: _aspectRatio,
+          backgroundColor: ColorPalette.deepSurface,
+          autoFullScreen: false,
+          enableFullScreenOnVerticalDrag: false,
+        ),
       ),
     );
   }

@@ -6,8 +6,10 @@ import 'package:al_mobdea/core/widgets/background/background_student_layout.dart
 import 'package:al_mobdea/core/widgets/app_toast.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/cache/login_local_data_source.dart';
 import 'package:al_mobdea/features/home/presentation/widgets/home_screen_content.dart';
+import 'package:al_mobdea/features/lessons/presentation/cubit/lessons_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.gradeId});
@@ -63,10 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    Navigator.of(context).pushNamed(
-      RouteNames.liveSessionScreen,
-      arguments: gradeId,
-    );
+    Navigator.of(context)
+        .pushNamed(RouteNames.liveSessionScreen, arguments: gradeId);
   }
 
   @override
@@ -79,7 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
         body: BackgroundStudentLayout(
           child: SafeArea(
             bottom: false,
-            child: HomeScreenContent(onLiveSessionPressed: _openLiveSession),
+            child: BlocProvider(
+              create: (_) => getIt<LessonsCubit>()..initialize(),
+              child: HomeScreenContent(onLiveSessionPressed: _openLiveSession),
+            ),
           ),
         ),
       ),

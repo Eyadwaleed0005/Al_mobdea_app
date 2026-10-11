@@ -28,6 +28,8 @@ final class LessonsDataSuccess extends LessonsState {
   final List<LessonEntity> lessons;
   final String query;
 
+  int get lessonsCount => lessons.length;
+
   bool get hasActiveQuery => query.trim().isNotEmpty;
 
   bool get hasNoResults => hasActiveQuery && lessons.isEmpty;

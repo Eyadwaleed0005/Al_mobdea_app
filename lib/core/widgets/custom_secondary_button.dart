@@ -1,3 +1,4 @@
+import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
 import 'package:al_mobdea/core/widgets/app_loading_indicator.dart';
@@ -43,16 +44,20 @@ class CustomSecondaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color resolvedBackgroundColor =
-        backgroundColor ?? (hasBorder ? ColorPalette.surface : Colors.transparent);
+        backgroundColor ??
+        (hasBorder ? ColorPalette.surface : Colors.transparent);
 
     final Color resolvedForegroundColor =
-        foregroundColor ?? (hasBorder ? ColorPalette.primary : ColorPalette.wine200);
+        foregroundColor ??
+        (hasBorder ? ColorPalette.primary : ColorPalette.wine200);
 
     final Color resolvedBorderColor =
         borderColor ?? (hasBorder ? ColorPalette.softSage : Colors.transparent);
 
     final bool showBorder =
-        hasBorder && resolvedBorderColor != Colors.transparent && (borderWidth ?? 1) > 0;
+        hasBorder &&
+        resolvedBorderColor != Colors.transparent &&
+        (borderWidth ?? 1) > 0;
 
     final Widget content = isLoading
         ? AppLoadingIndicator(
@@ -69,7 +74,7 @@ class CustomSecondaryButton extends StatelessWidget {
                 children: [
                   if (icon != null) ...[
                     Icon(icon, size: 18.sp, color: resolvedForegroundColor),
-                    SizedBox(width: 4.w),
+                    horizontalSpace(4),
                   ],
                   Flexible(
                     child: Text(
@@ -84,7 +89,9 @@ class CustomSecondaryButton extends StatelessWidget {
                                       : AppTextStyle.font13Wine200RegularTajawal()))
                               .copyWith(
                                 color:
-                                    foregroundColor ?? textStyle?.color ?? resolvedForegroundColor,
+                                    foregroundColor ??
+                                    textStyle?.color ??
+                                    resolvedForegroundColor,
                               ),
                     ),
                   ),
@@ -92,8 +99,12 @@ class CustomSecondaryButton extends StatelessWidget {
               );
 
     final ButtonStyle buttonStyle = OutlinedButton.styleFrom(
-      tapTargetSize: hasBorder ? MaterialTapTargetSize.padded : MaterialTapTargetSize.shrinkWrap,
-      minimumSize: hasBorder ? Size(width ?? double.infinity, height ?? 52.h) : Size.zero,
+      tapTargetSize: hasBorder
+          ? MaterialTapTargetSize.padded
+          : MaterialTapTargetSize.shrinkWrap,
+      minimumSize: hasBorder
+          ? Size(width ?? double.infinity, height ?? 52.h)
+          : Size.zero,
       padding:
           padding ??
           (hasBorder
@@ -104,10 +115,15 @@ class CustomSecondaryButton extends StatelessWidget {
       foregroundColor: resolvedForegroundColor,
       disabledForegroundColor: resolvedForegroundColor,
       side: showBorder
-          ? BorderSide(color: resolvedBorderColor, width: (borderWidth ?? 1.5).w)
+          ? BorderSide(
+              color: resolvedBorderColor,
+              width: (borderWidth ?? 1.5).w,
+            )
           : BorderSide.none,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular((borderRadius ?? (hasBorder ? 12 : 8)).r),
+        borderRadius: BorderRadius.circular(
+          (borderRadius ?? (hasBorder ? 12 : 8)).r,
+        ),
       ),
       elevation: 0,
     );
@@ -119,7 +135,11 @@ class CustomSecondaryButton extends StatelessWidget {
     );
 
     if (hasBorder) {
-      return SizedBox(width: width ?? double.infinity, height: height ?? 52.h, child: button);
+      return SizedBox(
+        width: width ?? double.infinity,
+        height: height ?? 52.h,
+        child: button,
+      );
     }
 
     if (width != null || height != null) {

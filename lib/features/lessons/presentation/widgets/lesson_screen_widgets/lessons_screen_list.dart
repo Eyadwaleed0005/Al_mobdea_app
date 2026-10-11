@@ -2,6 +2,7 @@ import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/app_animations.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
+import 'package:al_mobdea/core/widgets/custom_app_bar.dart';
 import 'package:al_mobdea/core/widgets/custom_search_bar.dart';
 import 'package:al_mobdea/features/lessons/domain/entities/lesson_entity.dart';
 import 'package:al_mobdea/features/lessons/presentation/widgets/lesson_screen_widgets/lesson_preview_card.dart';
@@ -31,7 +32,9 @@ class LessonsScreenList extends StatefulWidget {
 }
 
 class _LessonsScreenListState extends State<LessonsScreenList> {
-  late final TextEditingController _searchController = TextEditingController(text: widget.query);
+  late final TextEditingController _searchController = TextEditingController(
+    text: widget.query,
+  );
 
   @override
   void dispose() {
@@ -44,29 +47,46 @@ class _LessonsScreenListState extends State<LessonsScreenList> {
     return ListView(
       physics: const BouncingScrollPhysics(),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      padding: EdgeInsets.only(top: 35.h, bottom: 112.h),
+      padding: EdgeInsets.only(bottom: 112.h),
       children: [
-        CustomSearchBar(
-          controller: _searchController,
-          hintText: 'ابحث عن درس...',
-          onChanged: widget.onSearchChanged,
-          onClear: widget.onSearchClear,
-        ),
-        verticalSpace(28),
-        if (widget.hasNoResults)
-          _buildNoResultsView()
-        else
-          for (var index = 0; index < widget.lessons.length; index++) ...[
-            AppAnimations.screenSection(
-              delay: 60 * index,
-              child: LessonPreviewCard(
-                title: widget.lessons[index].title,
-                subtitle: widget.lessons[index].description,
-                onTap: () => widget.onLessonTap(widget.lessons[index]),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            children: [
+              verticalSpace(12),
+              CustomAppBar(
+                title: 'الدروس',
+                titleColor: ColorPalette.surface,
+                titleBackgroundColor: ColorPalette.primary,
+                backgroundColor: Colors.transparent,
+                showBackButton: false,
+                toolbarHeight: 48.h,
               ),
-            ),
-            if (index != widget.lessons.length - 1) verticalSpace(22),
-          ],
+              verticalSpace(35),
+              CustomSearchBar(
+                controller: _searchController,
+                hintText: 'ابحث عن درس...',
+                onChanged: widget.onSearchChanged,
+                onClear: widget.onSearchClear,
+              ),
+              verticalSpace(28),
+              if (widget.hasNoResults)
+                _buildNoResultsView()
+              else
+                for (var index = 0; index < widget.lessons.length; index++) ...[
+                  AppAnimations.screenSection(
+                    delay: 60 * index,
+                    child: LessonPreviewCard(
+                      title: widget.lessons[index].title,
+                      subtitle: widget.lessons[index].description,
+                      onTap: () => widget.onLessonTap(widget.lessons[index]),
+                    ),
+                  ),
+                  if (index != widget.lessons.length - 1) verticalSpace(22),
+                ],
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -78,7 +98,11 @@ class _LessonsScreenListState extends State<LessonsScreenList> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off_rounded, size: 54.sp, color: ColorPalette.wine200),
+            Icon(
+              Icons.search_off_rounded,
+              size: 54.sp,
+              color: ColorPalette.wine200,
+            ),
             verticalSpace(16),
             Text(
               'لا توجد نتائج تطابق بحثك',

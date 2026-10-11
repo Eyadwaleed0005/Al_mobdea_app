@@ -6,7 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CurvedAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CurvedAppBar({super.key, required this.title, this.onBack, this.showBackButton = true});
+  const CurvedAppBar({
+    super.key,
+    required this.title,
+    this.onBack,
+    this.showBackButton = true,
+  });
 
   final String title;
   final VoidCallback? onBack;
@@ -35,7 +40,11 @@ class CurvedAppBar extends StatelessWidget implements PreferredSizeWidget {
                       padding: EdgeInsets.only(top: 20.h, left: 20.w),
                       constraints: const BoxConstraints(),
                       onPressed: onBack ?? () => Navigator.of(context).pop(),
-                      icon: SvgPicture.asset(AppImage().arrowBack, height: 10.h, width: 10.w),
+                      icon: SvgPicture.asset(
+                        AppImage().arrowBack,
+                        height: 10.h,
+                        width: 10.w,
+                      ),
                     )
                   : SizedBox(height: 10.h, width: 10.w),
               Flexible(
@@ -76,7 +85,12 @@ class _CurvedHeaderPainter extends CustomPainter {
       ..lineTo(0, 0)
       ..close();
 
-    canvas.drawShadow(path, ColorPalette.cardShadow.withValues(alpha: 0.19), 5, false);
+    canvas.drawShadow(
+      path,
+      ColorPalette.cardShadow.withValues(alpha: 0.19),
+      5,
+      false,
+    );
     canvas.drawPath(path, Paint()..color = ColorPalette.cream50);
   }
 

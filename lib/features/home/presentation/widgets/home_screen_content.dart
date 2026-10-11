@@ -18,7 +18,7 @@ class HomeScreenContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          HomeHeader(onNotificationPressed: () => {}),
+          const HomeHeader(),
           verticalSpace(22),
           Text(
             'دروس ومحاضرات واختبارات في مكان واحد',
@@ -35,8 +35,9 @@ class HomeScreenContent extends StatelessWidget {
           ),
           verticalSpace(14),
           LiveSessionBanner(onTap: onLiveSessionPressed),
-          SizedBox(height: 36.h),
+          verticalSpace(36),
           const HomeQuickLinksSection(),
+          verticalSpace(120),
         ],
       ),
     );

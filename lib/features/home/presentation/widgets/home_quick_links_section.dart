@@ -2,6 +2,8 @@ import 'package:al_mobdea/app/routes/app_images_routes.dart';
 import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
 import 'package:al_mobdea/features/home/presentation/widgets/category_navigation_card.dart';
+import 'package:al_mobdea/features/lessons/presentation/cubit/lessons_cubit.dart';
+import 'package:al_mobdea/features/lessons/presentation/cubit/lessons_state.dart';
 import 'package:al_mobdea/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,8 +17,13 @@ class HomeQuickLinksSection extends StatelessWidget {
   void _changeNavigationIndex(BuildContext context, int index) {
     context.read<BottomNavigationCubit>().changeIndex(index);
   }
+
   @override
   Widget build(BuildContext context) {
+    final cubit = context.watch<LessonsCubit>();
+    final lessonsCount = cubit.state is LessonsDataSuccess
+        ? (cubit.state as LessonsDataSuccess).lessonsCount
+        : 0;
     return Column(
       children: [
         Text(
@@ -34,12 +41,9 @@ class HomeQuickLinksSection extends StatelessWidget {
               Expanded(
                 child: CategoryNavigationCard(
                   label: 'الدروس',
-                  details: '12 درسًا',
+                  details: '$lessonsCount دروس',
                   image: AppImage().lessons,
-                  onTap: () => {
-                     _changeNavigationIndex(context, _lessonsIndex),
-
-                  },
+                  onTap: () => {_changeNavigationIndex(context, _lessonsIndex)},
                 ),
               ),
               horizontalSpace(8),
@@ -49,8 +53,7 @@ class HomeQuickLinksSection extends StatelessWidget {
                   details: 'ملفات PDF',
                   image: AppImage().studyNotes,
                   onTap: () => {
-                      _changeNavigationIndex(context, _studyNotesIndex),
-
+                    _changeNavigationIndex(context, _studyNotesIndex),
                   },
                 ),
               ),
@@ -60,9 +63,7 @@ class HomeQuickLinksSection extends StatelessWidget {
                   label: 'الاختبارات',
                   details: 'جرّب نفسك',
                   image: AppImage().exam,
-                  onTap: () => {
-                    _changeNavigationIndex(context, _examsIndex),
-                  },
+                  onTap: () => {_changeNavigationIndex(context, _examsIndex)},
                 ),
               ),
             ],

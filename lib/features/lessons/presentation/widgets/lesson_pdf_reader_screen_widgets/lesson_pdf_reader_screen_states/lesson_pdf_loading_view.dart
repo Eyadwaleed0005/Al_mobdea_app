@@ -1,6 +1,7 @@
 import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
+import 'package:al_mobdea/core/widgets/app_loading_indicator.dart';
 import 'package:al_mobdea/features/lessons/presentation/widgets/lesson_pdf_reader_screen_widgets/lesson_pdf_state_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +19,7 @@ class LessonPdfLoadingView extends StatelessWidget {
           children: [
             SizedBox.square(
               dimension: 40.w,
-              child: const CircularProgressIndicator(
+              child: const AppLoadingIndicator(
                 color: ColorPalette.primary,
                 strokeWidth: 3,
               ),

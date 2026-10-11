@@ -47,9 +47,10 @@ class LessonDetailsContentScreen extends StatelessWidget {
                       subtitle: _getPdfSubtitle(),
                       icon: Icons.menu_book_outlined,
                       iconBackground: ColorPalette.wine50,
-                      onTap: () =>
-                          Navigator.of(context)
-                              .pushNamed(RouteNames.lessonDetailsPdf, arguments: lesson),
+                      onTap: () => Navigator.of(context).pushNamed(
+                        RouteNames.lessonDetailsPdf,
+                        arguments: lesson,
+                      ),
                     ),
                     verticalSpace(12),
                     LessonMaterialTile(
@@ -57,9 +58,10 @@ class LessonDetailsContentScreen extends StatelessWidget {
                       subtitle: 'اختبار الدرس',
                       icon: Icons.assignment_turned_in_outlined,
                       iconBackground: ColorPalette.gold50,
-                      onTap: () =>
-                          Navigator.of(context)
-                              .pushNamed(RouteNames.lessonQuiz, arguments: lesson.lessonId),
+                      onTap: () => Navigator.of(context).pushNamed(
+                        RouteNames.lessonQuiz,
+                        arguments: lesson.lessonId,
+                      ),
                     ),
                   ],
                 ),

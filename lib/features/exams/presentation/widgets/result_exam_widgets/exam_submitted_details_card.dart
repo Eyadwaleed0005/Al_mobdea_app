@@ -1,11 +1,14 @@
+import 'package:al_mobdea/core/helper/arabic_numbers_helper.dart';
 import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
+import 'package:al_mobdea/features/exams/domain/entities/student_exam_result_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ExamSubmittedDetailsCard extends StatelessWidget {
-  const ExamSubmittedDetailsCard({super.key});
+  final StudentExamResultEntity result;
+  const ExamSubmittedDetailsCard({super.key, required this.result});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,10 @@ class ExamSubmittedDetailsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorPalette.surface,
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: ColorPalette.borderWarm.withValues(alpha: 0.6), width: 1.w),
+        border: Border.all(
+          color: ColorPalette.borderWarm.withValues(alpha: 0.6),
+          width: 1.w,
+        ),
         boxShadow: [
           BoxShadow(
             color: ColorPalette.cardShadow.withValues(alpha: 0.04),
@@ -36,7 +42,9 @@ class ExamSubmittedDetailsCard extends StatelessWidget {
           verticalSpace(12),
           _buildItem(
             label: 'النتيجة',
-            badgeText: 'متاحة للمدرس فقط',
+            badgeText:
+                '${toArabicNumbers(result.score)} / '
+                '${toArabicNumbers(result.totalScore)}',
             badgeBgColor: ColorPalette.borderWarm.withValues(alpha: 0.35),
             badgeTextColor: ColorPalette.textSecondary,
             dotColor: ColorPalette.disabled,
@@ -62,10 +70,11 @@ class ExamSubmittedDetailsCard extends StatelessWidget {
     required Color dotColor,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),        decoration: BoxDecoration(
-          color: ColorPalette.cardFillSoft,
-          borderRadius: BorderRadius.circular(16.r),
-        ),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: ColorPalette.cardFillSoft,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -81,7 +90,10 @@ class ExamSubmittedDetailsCard extends StatelessWidget {
                 Container(
                   width: 7.r,
                   height: 7.r,
-                  decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: dotColor,
+                    shape: BoxShape.circle,
+                  ),
                 ),
                 horizontalSpace(6),
                 Text(

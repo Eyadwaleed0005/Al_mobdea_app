@@ -22,72 +22,100 @@ class LessonsScreenContent extends StatelessWidget {
     return BackgroundStudentLayout(
       child: SafeArea(
         bottom: false,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            children: [
-              verticalSpace(12),
-              CustomAppBar(
-                title: 'الدروس',
-                titleColor: ColorPalette.surface,
-                titleBackgroundColor: ColorPalette.primary,
-                backgroundColor: Colors.transparent,
-                showBackButton: false,
-                toolbarHeight: 48.h,
-              ),
-              Expanded(
-                child: BlocBuilder<LessonsCubit, LessonsState>(
-                  builder: (context, state) {
-                    final cubit = context.read<LessonsCubit>();
+        child: BlocBuilder<LessonsCubit, LessonsState>(
+          builder: (context, state) {
+            final cubit = context.read<LessonsCubit>();
 
-                    if (state is LessonsInitial || state is LessonsLoading) {
-                      return _buildLoadingView();
-                    }
+            if (state is LessonsInitial || state is LessonsLoading) {
+              return _buildLoadingView();
+            }
 
-                    if (state is LessonsFailure) {
-                      return LessonsErrorView(
+            if (state is LessonsFailure) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
+                  children: [
+                    verticalSpace(12),
+                    CustomAppBar(
+                      title: 'الدروس',
+                      titleColor: ColorPalette.surface,
+                      titleBackgroundColor: ColorPalette.primary,
+                      backgroundColor: Colors.transparent,
+                      showBackButton: false,
+                      toolbarHeight: 48.h,
+                    ),
+                    Expanded(
+                      child: LessonsErrorView(
                         errorMessage: state.error.message,
                         onRetry: cubit.retry,
-                      );
-                    }
-
-                    if (state is LessonsEmpty) {
-                      return const LessonsEmptyView();
-                    }
-
-                    if (state is LessonsDataSuccess) {
-                      return LessonsSuccessView(
-                        lessons: state.lessons,
-                        query: state.query,
-                        hasNoResults: state.hasNoResults,
-                        onSearchChanged: cubit.search,
-                        onSearchClear: () => cubit.search(''),
-                        onLessonTap: (lesson) {
-                          Navigator.of(context)
-                              .pushNamed(RouteNames.lessonDetails, arguments: lesson);
-                        },
-                      );
-                    }
-
-                    return const SizedBox.shrink();
-                  },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
+              );
+            }
+
+            if (state is LessonsEmpty) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
+                  children: [
+                    verticalSpace(12),
+                    CustomAppBar(
+                      title: 'الدروس',
+                      titleColor: ColorPalette.surface,
+                      titleBackgroundColor: ColorPalette.primary,
+                      backgroundColor: Colors.transparent,
+                      showBackButton: false,
+                      toolbarHeight: 48.h,
+                    ),
+                    const Expanded(child: LessonsEmptyView()),
+                  ],
+                ),
+              );
+            }
+
+            if (state is LessonsDataSuccess) {
+              return LessonsSuccessView(
+                lessons: state.lessons,
+                query: state.query,
+                hasNoResults: state.hasNoResults,
+                onSearchChanged: cubit.search,
+                onSearchClear: () => cubit.search(''),
+                onLessonTap: (lesson) {
+                  Navigator.of(context)
+                      .pushNamed(RouteNames.lessonDetails, arguments: lesson);
+                },
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
         ),
       ),
     );
   }
 
   Widget _buildLoadingView() {
-    return Column(
-      children: [
-        verticalSpace(48),
-        const AbsorbPointer(child: CustomSearchBar(hintText: 'ابحث عن درس...')),
-        verticalSpace(28),
-        const Expanded(child: LessonsLoadingView()),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        children: [
+          verticalSpace(12),
+          CustomAppBar(
+            title: 'الدروس',
+            titleColor: ColorPalette.surface,
+            titleBackgroundColor: ColorPalette.primary,
+            backgroundColor: Colors.transparent,
+            showBackButton: false,
+            toolbarHeight: 48.h,
+          ),
+          verticalSpace(48),
+          const AbsorbPointer(child: CustomSearchBar(hintText: 'ابحث عن درس...')),
+          verticalSpace(28),
+          const Expanded(child: LessonsLoadingView()),
+        ],
+      ),
     );
   }
 }

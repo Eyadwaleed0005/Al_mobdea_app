@@ -33,7 +33,7 @@ class ResultExamScreenContent extends StatelessWidget {
                     verticalSpace(10),
                     ExamSubmittedSuccessCard(examName: result.examName),
                     verticalSpace(28),
-                    const ExamSubmittedDetailsCard(),
+                    ExamSubmittedDetailsCard(result: result),
                     verticalSpace(16),
                     Text(
                       'نتائج الاختبارات العامة لا تظهر داخل تطبيق الطالب.',
