@@ -7,7 +7,6 @@ import 'package:al_mobdea/features/authentication/data/data_source/remote/fireba
 import 'package:al_mobdea/features/authentication/data/data_source/remote/firebase_logout_remote_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/remote/login_remote_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/remote/logout_remote_data_source.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:al_mobdea/features/authentication/data/repositories/login_repo_impl.dart';
 import 'package:al_mobdea/features/authentication/data/repositories/logout_repository_impl.dart';
 import 'package:al_mobdea/features/authentication/domain/repositories/login_repo.dart';
