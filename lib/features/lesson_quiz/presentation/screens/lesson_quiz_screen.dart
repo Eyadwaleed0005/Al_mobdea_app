@@ -8,9 +8,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LessonQuizScreen extends StatelessWidget {
-  const LessonQuizScreen({super.key, required this.lessonId});
+  const LessonQuizScreen({
+    super.key,
+    required this.lessonId,
+    required this.lessonTitle,
+  });
 
   final String lessonId;
+  final String lessonTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,10 @@ class LessonQuizScreen extends StatelessWidget {
         value: AppSystemUi.dark(),
         child: Scaffold(
           backgroundColor: ColorPalette.background,
-          body: LessonQuizQuestionScreenContent(lessonId: lessonId),
+          body: LessonQuizQuestionScreenContent(
+            lessonId: lessonId,
+            lessonTitle: lessonTitle,
+          ),
         ),
       ),
     );

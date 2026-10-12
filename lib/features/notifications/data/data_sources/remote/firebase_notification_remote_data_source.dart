@@ -1,10 +1,13 @@
 import 'package:al_mobdea/features/notifications/data/data_sources/remote/notification_remote_data_source.dart';
 import 'package:al_mobdea/features/notifications/data/models/app_notification_model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
-class FirebaseNotificationRemoteDataSource implements NotificationRemoteDataSource {
-  const FirebaseNotificationRemoteDataSource({required FirebaseMessaging firebaseMessaging})
-    : _firebaseMessaging = firebaseMessaging;
+class FirebaseNotificationRemoteDataSource
+    implements NotificationRemoteDataSource {
+  const FirebaseNotificationRemoteDataSource({
+    required FirebaseMessaging firebaseMessaging,
+  }) : _firebaseMessaging = firebaseMessaging;
 
   final FirebaseMessaging _firebaseMessaging;
 
@@ -12,7 +15,7 @@ class FirebaseNotificationRemoteDataSource implements NotificationRemoteDataSour
 
   @override
   Future<void> requestPermission() async {
-    await _firebaseMessaging.requestPermission(
+    final settings = await _firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -20,6 +23,10 @@ class FirebaseNotificationRemoteDataSource implements NotificationRemoteDataSour
       criticalAlert: false,
       provisional: false,
       sound: true,
+    );
+
+    debugPrint(
+      '[Notifications] Permission: ${settings.authorizationStatus.name}',
     );
 
     await _firebaseMessaging.setForegroundNotificationPresentationOptions(
@@ -30,8 +37,14 @@ class FirebaseNotificationRemoteDataSource implements NotificationRemoteDataSour
   }
 
   @override
-  Future<void> subscribeToGradeTopic({required String gradeId}) {
-    return _firebaseMessaging.subscribeToTopic(_createGradeTopic(gradeId));
+  Future<void> subscribeToGradeTopic({required String gradeId}) async {
+    final topic = _createGradeTopic(gradeId);
+
+    debugPrint('[Notifications] Subscribing to topic: $topic');
+
+    await _firebaseMessaging.subscribeToTopic(topic);
+
+    debugPrint('[Notifications] Topic subscription completed: $topic');
   }
 
   @override
@@ -41,12 +54,22 @@ class FirebaseNotificationRemoteDataSource implements NotificationRemoteDataSour
 
   @override
   Stream<AppNotificationModel> streamForegroundNotifications() {
-    return FirebaseMessaging.onMessage.map(AppNotificationModel.fromRemoteMessage);
+    debugPrint('[Notifications] Foreground listener started');
+
+    return FirebaseMessaging.onMessage.map((message) {
+      debugPrint(
+        '[Notifications] Foreground message received: ${message.messageId}',
+      );
+
+      return AppNotificationModel.fromRemoteMessage(message);
+    });
   }
 
   @override
   Stream<AppNotificationModel> streamOpenedNotifications() {
-    return FirebaseMessaging.onMessageOpenedApp.map(AppNotificationModel.fromRemoteMessage);
+    return FirebaseMessaging.onMessageOpenedApp.map(
+      AppNotificationModel.fromRemoteMessage,
+    );
   }
 
   @override
@@ -67,7 +90,8 @@ class FirebaseNotificationRemoteDataSource implements NotificationRemoteDataSour
       throw const FormatException();
     }
 
-    final isValidTopic = RegExp(r'^[a-zA-Z0-9_.~%-]+$').hasMatch(normalizedGradeId);
+    final isValidTopic = RegExp(r'^[a-zA-Z0-9_.~%-]+$')
+        .hasMatch(normalizedGradeId);
 
     if (!isValidTopic) {
       throw const FormatException();

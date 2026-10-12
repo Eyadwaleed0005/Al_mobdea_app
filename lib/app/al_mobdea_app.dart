@@ -14,13 +14,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AlMobdeaApp extends StatelessWidget {
   const AlMobdeaApp({super.key});
 
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<NotificationCubit>(
+          lazy: false,
           create: (_) {
             return getIt<NotificationCubit>()..initialize();
           },
@@ -57,7 +59,10 @@ class AlMobdeaApp extends StatelessWidget {
   }
 
   Widget _buildApp(BuildContext context, Widget? child) {
-    final Widget previewedChild = DevicePreviewService.appBuilder(context, child);
+    final Widget previewedChild = DevicePreviewService.appBuilder(
+      context,
+      child,
+    );
 
     return PendingExamSubmissionsSyncHandler(
       child: NotificationNavigationHandler(

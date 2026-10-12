@@ -17,29 +17,50 @@ abstract final class LessonsRoutes {
           settings: settings,
           builder: (_) => const LessonsScreen(),
         );
+
       case RouteNames.lessonDetails:
         final lesson = settings.arguments;
-        if (lesson is! LessonEntity) return _invalidRoute(settings);
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (_) => LessonDetailsScreen(lesson: lesson),
-        );
-      case RouteNames.lessonDetailsPdf:
-        final lesson = settings.arguments;
-        if (lesson is! LessonEntity) return _invalidRoute(settings);
-        return MaterialPageRoute<void>(
-          settings: settings,
-          builder: (_) => LessonPdfReaderScreen(lesson: lesson),
-        );
-      case RouteNames.lessonQuiz:
-        final lessonId = settings.arguments;
-        if (lessonId is! String || lessonId.trim().isEmpty) {
+
+        if (lesson is! LessonEntity) {
           return _invalidRoute(settings);
         }
+
         return MaterialPageRoute<void>(
           settings: settings,
-          builder: (_) => LessonQuizScreen(lessonId: lessonId),
+          builder: (_) => LessonDetailsScreen(
+            lesson: lesson,
+          ),
         );
+
+      case RouteNames.lessonDetailsPdf:
+        final lesson = settings.arguments;
+
+        if (lesson is! LessonEntity) {
+          return _invalidRoute(settings);
+        }
+
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => LessonPdfReaderScreen(
+            lesson: lesson,
+          ),
+        );
+
+      case RouteNames.lessonQuiz:
+        final lesson = settings.arguments;
+
+        if (lesson is! LessonEntity || lesson.lessonId.trim().isEmpty) {
+          return _invalidRoute(settings);
+        }
+
+        return MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => LessonQuizScreen(
+            lessonId: lesson.lessonId,
+            lessonTitle: lesson.title,
+          ),
+        );
+
       default:
         return null;
     }

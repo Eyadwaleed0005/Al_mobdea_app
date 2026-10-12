@@ -9,9 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LessonQuizQuestionScreenContent extends StatelessWidget {
-  const LessonQuizQuestionScreenContent({super.key, required this.lessonId});
+  const LessonQuizQuestionScreenContent({
+    super.key,
+    required this.lessonId,
+    required this.lessonTitle,
+  });
 
   final String lessonId;
+  final String lessonTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,7 @@ class LessonQuizQuestionScreenContent extends StatelessWidget {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: LessonQuizAppBar(title: 'اختبار النحو العربي'),
+          appBar: LessonQuizAppBar(title: lessonTitle),
           body: SafeArea(
             top: false,
             child: BlocBuilder<LessonQuizCubit, LessonQuizState>(
