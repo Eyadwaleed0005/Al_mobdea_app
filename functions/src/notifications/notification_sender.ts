@@ -23,6 +23,10 @@ export async function sendGradeNotification(
 
   await getMessaging().send({
     topic,
+    notification: {
+      title: notification.title,
+      body: notification.body,
+    },
     data: {
       eventId,
       type: notification.type,
@@ -33,6 +37,12 @@ export async function sendGradeNotification(
     },
     android: {
       priority: "high",
+      notification: {
+        channelId: "high_importance_channel_v2",
+        icon: "ic_notification",
+        color: "#5B111D",
+        sound: "al_mobdea_notification",
+      },
     },
     apns: {
       headers: {

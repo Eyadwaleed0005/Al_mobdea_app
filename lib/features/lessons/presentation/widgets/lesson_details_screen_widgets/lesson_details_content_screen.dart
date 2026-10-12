@@ -60,7 +60,7 @@ class LessonDetailsContentScreen extends StatelessWidget {
                       iconBackground: ColorPalette.gold50,
                       onTap: () => Navigator.of(context).pushNamed(
                         RouteNames.lessonQuiz,
-                        arguments: lesson.lessonId,
+                        arguments: lesson,
                       ),
                     ),
                   ],

@@ -9,6 +9,7 @@ import 'package:al_mobdea/features/notifications/data/models/app_notification_mo
 import 'package:al_mobdea/features/notifications/domain/entities/app_notification_entity.dart';
 import 'package:al_mobdea/features/notifications/domain/repositories/notification_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 
 class NotificationRepositoryImpl implements NotificationRepository {
   final NotificationRemoteDataSource _remoteDataSource;
@@ -26,17 +27,29 @@ class NotificationRepositoryImpl implements NotificationRepository {
   @override
   Future<Either<AppErrorModel, void>> initialize() async {
     try {
+      debugPrint('[Notifications] Initialization started');
+
       await _localNotificationDataSource.initialize();
+
+      debugPrint('[Notifications] Local initialization completed');
+
       await _remoteDataSource.requestPermission();
 
+      debugPrint('[Notifications] Initialization completed');
+
       return const Right(null);
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('[Notifications] Initialization failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
       return Left(NotificationErrorHandler.handle(error));
     }
   }
 
   @override
-  Future<Either<AppErrorModel, void>> syncGradeTopic({required String gradeId}) async {
+  Future<Either<AppErrorModel, void>> syncGradeTopic({
+    required String gradeId,
+  }) async {
     final normalizedGradeId = gradeId.trim();
 
     if (normalizedGradeId.isEmpty) {
@@ -44,17 +57,18 @@ class NotificationRepositoryImpl implements NotificationRepository {
     }
 
     try {
-      final storedGradeId = (await _topicLocalDataSource.getSubscribedGradeId())?.trim();
-
-      if (storedGradeId == normalizedGradeId) {
-        return const Right(null);
-      }
+      final storedGradeId = (await _topicLocalDataSource.getSubscribedGradeId())
+          ?.trim();
 
       await _remoteDataSource.subscribeToGradeTopic(gradeId: normalizedGradeId);
 
-      if (storedGradeId != null && storedGradeId.isNotEmpty) {
+      if (storedGradeId != null &&
+          storedGradeId.isNotEmpty &&
+          storedGradeId != normalizedGradeId) {
         try {
-          await _remoteDataSource.unsubscribeFromGradeTopic(gradeId: storedGradeId);
+          await _remoteDataSource.unsubscribeFromGradeTopic(
+            gradeId: storedGradeId,
+          );
         } catch (error, stackTrace) {
           await _tryUnsubscribeFromGrade(gradeId: normalizedGradeId);
 
@@ -62,42 +76,56 @@ class NotificationRepositoryImpl implements NotificationRepository {
         }
       }
 
-      await _topicLocalDataSource.saveSubscribedGradeId(gradeId: normalizedGradeId);
+      await _topicLocalDataSource.saveSubscribedGradeId(
+        gradeId: normalizedGradeId,
+      );
 
       return const Right(null);
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('[Notifications] Grade topic sync failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
       return Left(NotificationErrorHandler.handle(error));
     }
   }
 
   @override
-  Stream<Either<AppErrorModel, AppNotificationEntity>> streamForegroundNotifications() async* {
+  Stream<Either<AppErrorModel, AppNotificationEntity>>
+  streamForegroundNotifications() async* {
     try {
-      final notificationStream = _remoteDataSource.streamForegroundNotifications();
+      final notificationStream = _remoteDataSource
+          .streamForegroundNotifications();
 
       await for (final notification in notificationStream) {
         yield Right(notification.toEntity());
       }
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('[Notifications] Foreground stream failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
       yield Left(NotificationErrorHandler.handle(error));
     }
   }
 
   @override
-  Stream<Either<AppErrorModel, AppNotificationEntity>> streamOpenedNotifications() {
+  Stream<Either<AppErrorModel, AppNotificationEntity>>
+  streamOpenedNotifications() {
     return _mergeOpenedNotificationStreams();
   }
 
   @override
-  Future<Either<AppErrorModel, AppNotificationEntity?>> getInitialNotification() async {
+  Future<Either<AppErrorModel, AppNotificationEntity?>>
+  getInitialNotification() async {
     try {
-      final localNotification = await _localNotificationDataSource.getInitialNotification();
+      final localNotification = await _localNotificationDataSource
+          .getInitialNotification();
 
       if (localNotification != null) {
         return Right(localNotification.toEntity());
       }
 
-      final remoteNotification = await _remoteDataSource.getInitialNotification();
+      final remoteNotification = await _remoteDataSource
+          .getInitialNotification();
 
       return Right(remoteNotification?.toEntity());
     } catch (error) {
@@ -110,18 +138,29 @@ class NotificationRepositoryImpl implements NotificationRepository {
     required AppNotificationEntity notification,
   }) async {
     try {
+      debugPrint('[Notifications] Showing local notification');
+
       final notificationModel = AppNotificationModel.fromEntity(notification);
 
-      await _localNotificationDataSource.showNotification(notification: notificationModel);
+      await _localNotificationDataSource.showNotification(
+        notification: notificationModel,
+      );
+
+      debugPrint('[Notifications] Local notification show completed');
 
       return const Right(null);
-    } catch (error) {
+    } catch (error, stackTrace) {
+      debugPrint('[Notifications] Local notification failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
       return Left(NotificationErrorHandler.handle(error));
     }
   }
 
-  Stream<Either<AppErrorModel, AppNotificationEntity>> _mergeOpenedNotificationStreams() {
-    late final StreamController<Either<AppErrorModel, AppNotificationEntity>> controller;
+  Stream<Either<AppErrorModel, AppNotificationEntity>>
+  _mergeOpenedNotificationStreams() {
+    late final StreamController<Either<AppErrorModel, AppNotificationEntity>>
+    controller;
 
     StreamSubscription<AppNotificationModel>? remoteSubscription;
     StreamSubscription<AppNotificationModel>? localSubscription;
@@ -139,47 +178,51 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
     controller = StreamController<Either<AppErrorModel, AppNotificationEntity>>(
       onListen: () {
-        remoteSubscription = _remoteDataSource.streamOpenedNotifications().listen(
-          (notification) {
-            if (controller.isClosed) {
-              return;
-            }
+        remoteSubscription = _remoteDataSource
+            .streamOpenedNotifications()
+            .listen(
+              (notification) {
+                if (controller.isClosed) {
+                  return;
+                }
 
-            controller.add(Right(notification.toEntity()));
-          },
-          onError: (Object error) {
-            if (controller.isClosed) {
-              return;
-            }
+                controller.add(Right(notification.toEntity()));
+              },
+              onError: (Object error) {
+                if (controller.isClosed) {
+                  return;
+                }
 
-            controller.add(Left(NotificationErrorHandler.handle(error)));
-          },
-          onDone: () {
-            isRemoteStreamDone = true;
-            closeControllerIfDone();
-          },
-        );
+                controller.add(Left(NotificationErrorHandler.handle(error)));
+              },
+              onDone: () {
+                isRemoteStreamDone = true;
+                closeControllerIfDone();
+              },
+            );
 
-        localSubscription = _localNotificationDataSource.streamOpenedNotifications().listen(
-          (notification) {
-            if (controller.isClosed) {
-              return;
-            }
+        localSubscription = _localNotificationDataSource
+            .streamOpenedNotifications()
+            .listen(
+              (notification) {
+                if (controller.isClosed) {
+                  return;
+                }
 
-            controller.add(Right(notification.toEntity()));
-          },
-          onError: (Object error) {
-            if (controller.isClosed) {
-              return;
-            }
+                controller.add(Right(notification.toEntity()));
+              },
+              onError: (Object error) {
+                if (controller.isClosed) {
+                  return;
+                }
 
-            controller.add(Left(NotificationErrorHandler.handle(error)));
-          },
-          onDone: () {
-            isLocalStreamDone = true;
-            closeControllerIfDone();
-          },
-        );
+                controller.add(Left(NotificationErrorHandler.handle(error)));
+              },
+              onDone: () {
+                isLocalStreamDone = true;
+                closeControllerIfDone();
+              },
+            );
       },
       onCancel: () async {
         await remoteSubscription?.cancel();
@@ -202,7 +245,8 @@ class NotificationRepositoryImpl implements NotificationRepository {
   @override
   Future<Either<AppErrorModel, void>> unsubscribeFromCurrentGradeTopic() async {
     try {
-      final storedGradeId = (await _topicLocalDataSource.getSubscribedGradeId())?.trim();
+      final storedGradeId = (await _topicLocalDataSource.getSubscribedGradeId())
+          ?.trim();
 
       if (storedGradeId == null || storedGradeId.isEmpty) {
         return const Right(null);
