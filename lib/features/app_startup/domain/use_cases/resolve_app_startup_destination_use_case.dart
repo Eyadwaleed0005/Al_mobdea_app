@@ -4,9 +4,7 @@ import 'package:al_mobdea/features/app_startup/domain/entities/student_access_en
 import 'package:al_mobdea/features/app_startup/domain/repositories/app_startup_repository.dart';
 
 class ResolveAppStartupDestinationUseCase {
-  const ResolveAppStartupDestinationUseCase({
-    required this.repository,
-  });
+  const ResolveAppStartupDestinationUseCase({required this.repository});
 
   final AppStartupRepository repository;
 
@@ -83,16 +81,6 @@ class ResolveAppStartupDestinationUseCase {
   AppStartupDestination _resolveStudentDestination(
     StudentAccessEntity studentAccess,
   ) {
-    final hasValidSubscription = studentAccess.hasValidSubscription(
-      currentDate: DateTime.now(),
-    );
-
-    if (!hasValidSubscription) {
-      return AppStartupSubscriptionExpiredDestination(
-        subscriptionEndAt: studentAccess.subscriptionEndAt,
-      );
-    }
-
     return AppStartupHomeDestination(gradeId: studentAccess.gradeId);
   }
 }

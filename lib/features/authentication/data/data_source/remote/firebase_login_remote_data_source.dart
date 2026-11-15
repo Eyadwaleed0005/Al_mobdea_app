@@ -48,14 +48,6 @@ class FirebaseLoginRemoteDataSource implements LoginRemoteDataSource {
           );
         }
 
-        final bool isActive = studentData[FirestoreFields.isActive] == true;
-
-        if (!isActive) {
-          FirebaseErrorHandler.throwAuthCode(
-            FirebaseAuthErrorHandler.subscriptionExpiredCode,
-          );
-        }
-
         final bool isLoggedIn = studentData[FirestoreFields.isLoggedIn] == true;
 
         if (isLoggedIn) {
