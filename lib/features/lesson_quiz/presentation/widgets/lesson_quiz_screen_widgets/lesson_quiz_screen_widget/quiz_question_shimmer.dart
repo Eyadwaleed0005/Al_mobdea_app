@@ -35,21 +35,16 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, _) {
-          return SafeArea(
-            top: false,
-            child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(
-                20.w,
-                20.h,
-                20.w,
-                20.h,
-              ),
-              child: Column(
+    return SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 20.h),
+        child: RepaintBoundary(
+          child: AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, _) {
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildProgressSkeleton(),
@@ -60,10 +55,10 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
                   verticalSpace(18),
                   _buildButtonSkeleton(),
                 ],
-              ),
-            ),
-          );
-        },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -87,25 +82,27 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
           ],
         ),
         verticalSpace(12),
-        Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              height: 7.h,
-              decoration: BoxDecoration(
-                color: ColorPalette.wine50,
-                borderRadius: BorderRadius.circular(20.r),
+        SizedBox(
+          height: 7.h,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: ColorPalette.wine50,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: _buildSkeletonBox(
-                width: 180.w,
-                height: 7.h,
-                borderRadius: BorderRadius.circular(20.r),
+              FractionallySizedBox(
+                widthFactor: 0.55,
+                alignment: Alignment.centerRight,
+                child: _buildSkeletonBox(
+                  height: 7.h,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -114,12 +111,7 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
   Widget _buildQuestionCardSkeleton() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(
-        14.w,
-        26.h,
-        14.w,
-        28.h,
-      ),
+      padding: EdgeInsets.fromLTRB(18.w, 26.h, 18.w, 28.h),
       decoration: BoxDecoration(
         color: ColorPalette.surface,
         borderRadius: BorderRadius.circular(24.r),
@@ -137,40 +129,36 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Align(
+          FractionallySizedBox(
+            widthFactor: 0.95,
             alignment: Alignment.centerRight,
             child: _buildSkeletonBox(
-              width: 280.w,
               height: 16.h,
               borderRadius: BorderRadius.circular(7.r),
             ),
           ),
           verticalSpace(8),
-          Align(
+          FractionallySizedBox(
+            widthFactor: 0.65,
             alignment: Alignment.centerRight,
             child: _buildSkeletonBox(
-              width: 190.w,
               height: 16.h,
               borderRadius: BorderRadius.circular(7.r),
             ),
           ),
           verticalSpace(28),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w),
             child: _buildSkeletonBox(
               height: 72.h,
               borderRadius: BorderRadius.circular(12.r),
             ),
           ),
           verticalSpace(40),
-          ...List.generate(4, (index) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: index == 3 ? 0 : 10.h,
-              ),
-              child: _buildAnswerSkeleton(),
-            );
-          }),
+          for (var index = 0; index < 4; index++) ...[
+            _buildAnswerSkeleton(),
+            if (index != 3) verticalSpace(10),
+          ],
         ],
       ),
     );
@@ -183,27 +171,23 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
       padding: EdgeInsets.symmetric(horizontal: 14.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(17.r),
-        border: Border.all(
-          color: ColorPalette.border,
-        ),
+        border: Border.all(color: ColorPalette.border),
       ),
       child: Row(
         textDirection: TextDirection.rtl,
         children: [
           Expanded(
-            child: Align(
+            child: FractionallySizedBox(
+              widthFactor: 0.65,
               alignment: Alignment.centerRight,
               child: _buildSkeletonBox(
-                width: 125.w,
                 height: 12.h,
                 borderRadius: BorderRadius.circular(6.r),
               ),
             ),
           ),
           horizontalSpace(12),
-          _buildSkeletonCircle(
-            size: 18.w,
-          ),
+          _buildSkeletonCircle(size: 18.r),
         ],
       ),
     );
@@ -213,15 +197,15 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildSkeletonBox(
-          width: 165.w,
-          height: 10.h,
-          borderRadius: BorderRadius.circular(5.r),
+        Flexible(
+          child: _buildSkeletonBox(
+            width: 165.w,
+            height: 10.h,
+            borderRadius: BorderRadius.circular(5.r),
+          ),
         ),
         horizontalSpace(8),
-        _buildSkeletonCircle(
-          size: 16.w,
-        ),
+        _buildSkeletonCircle(size: 16.r),
       ],
     );
   }
@@ -233,9 +217,7 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
     );
   }
 
-  Widget _buildSkeletonCircle({
-    required double size,
-  }) {
+  Widget _buildSkeletonCircle({required double size}) {
     return _buildSkeletonBox(
       width: size,
       height: size,
@@ -263,11 +245,7 @@ class _QuizQuestionShimmerState extends State<QuizQuestionShimmer>
             ColorPalette.cream50,
             ColorPalette.divider,
           ],
-          stops: const [
-            0.2,
-            0.5,
-            0.8,
-          ],
+          stops: const [0.2, 0.5, 0.8],
         ),
       ),
     );
