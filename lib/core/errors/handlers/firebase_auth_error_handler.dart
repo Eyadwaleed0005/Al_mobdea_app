@@ -99,8 +99,7 @@ abstract final class FirebaseAuthErrorHandler {
       case 'too-many-requests':
         return _error(
           code: code,
-          message:
-              'تم إجراء محاولات تسجيل دخول كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
+          message: 'تم إجراء محاولات تسجيل دخول كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
           type: AppErrorType.rateLimit,
           isRetryable: true,
         );
@@ -118,6 +117,20 @@ abstract final class FirebaseAuthErrorHandler {
           message: 'حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى.',
           type: AppErrorType.server,
           isRetryable: true,
+        );
+
+      case 'email-already-in-use':
+        return _error(
+          code: code,
+          message: 'البريد الإلكتروني مستخدم بالفعل. سجّل الدخول أو استخدم بريدًا آخر.',
+          type: AppErrorType.conflict,
+        );
+
+      case 'weak-password':
+        return _error(
+          code: code,
+          message: 'كلمة المرور ضعيفة. استخدم كلمة مرور أقوى.',
+          type: AppErrorType.validation,
         );
 
       default:

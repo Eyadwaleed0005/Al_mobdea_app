@@ -3,9 +3,9 @@ import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/app_animations.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
 import 'package:al_mobdea/core/widgets/custom_app_card.dart';
-import 'package:al_mobdea/features/authentication/presentation/widgets/login_background.dart';
-import 'package:al_mobdea/features/authentication/presentation/widgets/login_form.dart';
-import 'package:al_mobdea/features/authentication/presentation/widgets/login_logo.dart';
+import 'package:al_mobdea/features/authentication/presentation/widgets/login_screen_widgets/login_background.dart';
+import 'package:al_mobdea/features/authentication/presentation/widgets/login_screen_widgets/login_form.dart';
+import 'package:al_mobdea/features/authentication/presentation/widgets/login_screen_widgets/login_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,10 +37,16 @@ class LoginScreenContant extends StatelessWidget {
                 delay: 600,
                 child: CustomAppCard(
                   borderRadius: 34,
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 28.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 28.h,
+                  ),
                   child: Column(
                     children: [
-                      Text('أهلاً بك من جديد', style: AppTextStyle.font21TextDarkBoldKufam()),
+                      Text(
+                        'أهلاً بك من جديد',
+                        style: AppTextStyle.font21TextDarkBoldKufam(),
+                      ),
                       verticalSpace(8),
                       Text(
                         'سجّل دخولك للوصول إلى دروسك واختباراتك',

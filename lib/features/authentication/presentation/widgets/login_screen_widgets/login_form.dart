@@ -1,12 +1,13 @@
 import 'package:al_mobdea/app/routes/screen_routes/route_names.dart';
 import 'package:al_mobdea/core/helper/spacer.dart';
+import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
 import 'package:al_mobdea/core/widgets/custom_button.dart';
 import 'package:al_mobdea/core/widgets/custom_operation_result_dialog.dart';
-import 'package:al_mobdea/core/widgets/custom_secondary_button.dart';
 import 'package:al_mobdea/core/widgets/custom_text_form_field.dart';
 import 'package:al_mobdea/features/authentication/presentation/cubit/login_cubit/login_cubit.dart';
 import 'package:al_mobdea/features/authentication/presentation/validation/login_validation.dart';
+import 'package:al_mobdea/features/authentication/presentation/widgets/login_screen_widgets/forgot_password_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,10 +51,10 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _navigateToMainScreen(BuildContext context) {
-    Navigator.of(
-      context,
-      rootNavigator: true,
-    ).pushNamedAndRemoveUntil(RouteNames.mainNavigationScreen, (route) => false);
+    Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+      RouteNames.mainNavigationScreen,
+      (route) => false,
+    );
   }
 
   @override
@@ -119,7 +120,9 @@ class _LoginFormState extends State<LoginForm> {
                   onPressed: isLoading ? null : _togglePasswordVisibility,
                   splashRadius: 18.r,
                   icon: Icon(
-                    _isObscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    _isObscure
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
                     color: const Color(0xFFB0A4A6),
                   ),
                 ),
@@ -131,11 +134,20 @@ class _LoginFormState extends State<LoginForm> {
                 isLoading: isLoading,
               ),
               verticalSpace(16),
-              CustomSecondaryButton(
-                onPressed: isLoading ? null : () {},
-                hasBorder: false,
-                text: 'نسيت كلمة المرور؟ تواصل مع المدرس.',
-                textStyle: AppTextStyle.font13Wine200RegularTajawal(),
+              ForgotPasswordTextButton(isLoading: isLoading),
+              verticalSpace(8),
+              TextButton(
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        Navigator.of(context)
+                            .pushNamed(RouteNames.registerScreen);
+                      },
+                child: Text(
+                  'ليس لديك حساب؟ إنشاء حساب',
+                  style: AppTextStyle.font14TextSecondaryRegularTajawal()
+                      .copyWith(color: ColorPalette.primary),
+                ),
               ),
             ],
           ),
