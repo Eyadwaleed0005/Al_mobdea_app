@@ -15,6 +15,9 @@ abstract final class FirebaseAuthErrorHandler {
   static const String authenticatedUserNotFoundCode =
       'authenticated-user-not-found';
 
+  static const String currentPasswordIncorrectCode =
+      'current-password-incorrect';
+
   static AppErrorModel handle(FirebaseAuthException error) {
     return handleCode(error.code);
   }
@@ -40,6 +43,29 @@ abstract final class FirebaseAuthErrorHandler {
           type: AppErrorType.authentication,
         );
 
+      case currentPasswordIncorrectCode:
+        return _error(
+          code: code,
+          message: 'كلمة المرور الحالية غير صحيحة.',
+          type: AppErrorType.authentication,
+        );
+
+      case 'user-mismatch':
+        return _error(
+          code: code,
+          message: 'بيانات التحقق لا تطابق الحساب الحالي.',
+          type: AppErrorType.authentication,
+        );
+
+      case 'requires-recent-login':
+      case 'user-token-expired':
+      case 'invalid-user-token':
+        return _error(
+          code: code,
+          message: 'يرجى تسجيل الدخول مجددًا لإتمام العملية.',
+          type: AppErrorType.authentication,
+        );
+
       case 'user-disabled':
         return _error(
           code: code,
@@ -50,7 +76,7 @@ abstract final class FirebaseAuthErrorHandler {
       case subscriptionExpiredCode:
         return _error(
           code: code,
-          message: 'اشتراك هذا الحساب انتهى. تواصل مع المنصة للتجديد.',
+          message: 'اشتراك هذا الحساب غير نشط حاليًا.',
           type: AppErrorType.authorization,
         );
 
@@ -80,10 +106,8 @@ abstract final class FirebaseAuthErrorHandler {
       case authenticatedUserNotFoundCode:
         return _error(
           code: code,
-          message:
-              'تعذر الوصول إلى بيانات الحساب بعد تسجيل الدخول. حاول مرة أخرى.',
+          message: 'تعذر الوصول إلى الحساب الحالي. سجّل الدخول مجددًا.',
           type: AppErrorType.authentication,
-          isRetryable: true,
         );
 
       case 'network-request-failed':
@@ -99,7 +123,7 @@ abstract final class FirebaseAuthErrorHandler {
       case 'too-many-requests':
         return _error(
           code: code,
-          message: 'تم إجراء محاولات تسجيل دخول كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
+          message: 'تم إجراء محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.',
           type: AppErrorType.rateLimit,
           isRetryable: true,
         );
@@ -107,14 +131,14 @@ abstract final class FirebaseAuthErrorHandler {
       case 'operation-not-allowed':
         return _error(
           code: code,
-          message: 'تسجيل الدخول غير متاح حاليًا. تواصل مع إدارة المنصة.',
+          message: 'هذه العملية غير متاحة حاليًا. تواصل مع إدارة المنصة.',
           type: AppErrorType.server,
         );
 
       case 'internal-error':
         return _error(
           code: code,
-          message: 'حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى.',
+          message: 'حدث خطأ أثناء تنفيذ العملية. حاول مرة أخرى.',
           type: AppErrorType.server,
           isRetryable: true,
         );
@@ -122,7 +146,7 @@ abstract final class FirebaseAuthErrorHandler {
       case 'email-already-in-use':
         return _error(
           code: code,
-          message: 'البريد الإلكتروني مستخدم بالفعل. سجّل الدخول أو استخدم بريدًا آخر.',
+          message: 'البريد الإلكتروني مستخدم بالفعل. استخدم بريدًا آخر.',
           type: AppErrorType.conflict,
         );
 
@@ -136,7 +160,7 @@ abstract final class FirebaseAuthErrorHandler {
       default:
         return _error(
           code: code,
-          message: 'تعذر إتمام عملية تسجيل الدخول. حاول مرة أخرى.',
+          message: 'تعذر إتمام العملية. حاول مرة أخرى.',
           type: AppErrorType.authentication,
           isRetryable: true,
         );

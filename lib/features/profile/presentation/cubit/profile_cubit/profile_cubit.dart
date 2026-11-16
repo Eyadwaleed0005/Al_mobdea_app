@@ -11,9 +11,10 @@ part 'profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   final StreamStudentProfileUseCase _streamStudentProfileUseCase;
 
-  ProfileCubit({required StreamStudentProfileUseCase streamStudentProfileUseCase})
-    : _streamStudentProfileUseCase = streamStudentProfileUseCase,
-      super(const ProfileInitial());
+  ProfileCubit({
+    required StreamStudentProfileUseCase streamStudentProfileUseCase,
+  }) : _streamStudentProfileUseCase = streamStudentProfileUseCase,
+       super(const ProfileInitial());
 
   StreamSubscription<Either<AppErrorModel, ProfileEntity>>?
   _profileSubscription;

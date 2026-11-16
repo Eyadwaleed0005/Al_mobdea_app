@@ -11,54 +11,48 @@ class MockProfileRepository extends Mock implements ProfileRepository {}
 void main() {
   late MockProfileRepository repository;
   late StreamStudentProfileUseCase useCase;
-  late ProfileEntity profile;
+
+  const profile = ProfileEntity(
+    studentProfile: StudentProfileEntity(
+      name: 'أحمد محمد',
+      gradeId: 'grade-3',
+      email: 'student@almobdea.com',
+    ),
+    grade: GradeEntity(name: 'الصف الثالث الثانوي'),
+  );
 
   setUp(() {
     repository = MockProfileRepository();
-    useCase = StreamStudentProfileUseCase(repository: repository);
 
-    profile = ProfileEntity(
-      studentProfile: StudentProfileEntity(
-        name: 'أحمد محمد',
-        gradeId: 'grade-3',
-        email: 'student@almobdea.com',
-        subscriptionStartAt: DateTime.utc(2026, 1, 1),
-        subscriptionEndAt: DateTime.utc(2026, 12, 31),
-      ),
-      grade: const GradeEntity(name: 'الصف الثالث الثانوي'),
-    );
+    useCase = StreamStudentProfileUseCase(repository: repository);
   });
 
   group('StreamStudentProfileUseCase', () {
-    test('should return ProfileEntity with student details', () async {
-      // Arrange
+    test('returns student profile details', () async {
       when(() => repository.streamStudentProfile()).thenAnswer(
         (_) => Stream<Either<AppErrorModel, ProfileEntity>>.value(
-          Right<AppErrorModel, ProfileEntity>(profile),
+          const Right<AppErrorModel, ProfileEntity>(profile),
         ),
       );
 
-      // Act
       final result = await useCase().first;
 
-      // Assert
       verify(() => repository.streamStudentProfile()).called(1);
-      expect(result.isRight(), isTrue, reason: 'Expected a Right result.');
 
-      result.fold((failure) => fail('Expected Right(ProfileEntity), got Left(${failure.code}).'), (
-        entity,
-      ) {
-        expect(entity.studentProfile.name, 'أحمد محمد');
-        expect(entity.studentProfile.gradeId, 'grade-3');
-        expect(entity.studentProfile.email, 'student@almobdea.com');
-        expect(entity.studentProfile.subscriptionStartAt, DateTime.utc(2026, 1, 1));
-        expect(entity.studentProfile.subscriptionEndAt, DateTime.utc(2026, 12, 31));
-        expect(entity.grade.name, 'الصف الثالث الثانوي');
-      });
+      result.fold(
+        (error) {
+          fail('Expected a profile, got ${error.code}.');
+        },
+        (entity) {
+          expect(entity.studentProfile.name, 'أحمد محمد');
+          expect(entity.studentProfile.gradeId, 'grade-3');
+          expect(entity.studentProfile.email, 'student@almobdea.com');
+          expect(entity.grade.name, 'الصف الثالث الثانوي');
+        },
+      );
     });
 
-    test('should return Left with AppErrorModel when repository stream fails', () async {
-      // Arrange
+    test('returns the repository error', () async {
       const failure = AppErrorModel(
         code: 'permission-denied',
         message: 'لا تملك صلاحية الوصول إلى هذه البيانات.',
@@ -68,23 +62,22 @@ void main() {
 
       when(() => repository.streamStudentProfile()).thenAnswer(
         (_) => Stream<Either<AppErrorModel, ProfileEntity>>.value(
-          Left<AppErrorModel, ProfileEntity>(failure),
+          const Left<AppErrorModel, ProfileEntity>(failure),
         ),
       );
 
-      // Act
       final result = await useCase().first;
 
-      // Assert
       verify(() => repository.streamStudentProfile()).called(1);
-      expect(result.isLeft(), isTrue, reason: 'Expected a Left result.');
 
-      result.fold((error) {
-        expect(error.code, failure.code);
-        expect(error.message, failure.message);
-        expect(error.type, failure.type);
-        expect(error.isRetryable, failure.isRetryable);
-      }, (_) => fail('Expected Left(AppErrorModel), got Right(ProfileEntity).'));
+      result.fold(
+        (error) {
+          expect(error, same(failure));
+        },
+        (_) {
+          fail('Expected an error, got a profile.');
+        },
+      );
     });
   });
 }

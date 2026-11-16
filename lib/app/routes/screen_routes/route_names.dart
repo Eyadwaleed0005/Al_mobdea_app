@@ -32,4 +32,8 @@ abstract final class RouteNames {
   static const String startExamScreen = '/startExamScreen';
 
   static const String resultExamScreen = '/resultExamScreen';
+
+  static const String personalInfoScreen = '/personal-info';
+  static const String mySubscriptionScreen = '/my-subscription';
+  static const String aboutTeacherScreen = '/about-teacher';
 }

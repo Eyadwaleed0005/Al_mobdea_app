@@ -32,7 +32,7 @@ class ProfileStudentCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Align(
-            alignment: AlignmentDirectional.centerEnd,
+            alignment: Alignment.centerRight,
             child: Container(
               width: 88.w,
               height: 88.w,
@@ -44,23 +44,35 @@ class ProfileStudentCard extends StatelessWidget {
               child: Text(
                 _initialLetter(studentProfile.name),
                 textDirection: TextDirection.rtl,
-                style: AppTextStyle.font24PrimaryBoldKufam().copyWith(fontSize: 34.sp),
+                style: AppTextStyle.font24PrimaryBoldKufam().copyWith(
+                  fontSize: 34.sp,
+                ),
               ),
             ),
           ),
           verticalSpace(18),
-          Text(
-            studentProfile.name,
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-            style: AppTextStyle.font20TextLightBoldKufam(),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerRight,
+            child: Text(
+              studentProfile.name,
+              textDirection: TextDirection.rtl,
+              textAlign: TextAlign.right,
+              maxLines: 1,
+              style: AppTextStyle.font20TextLightBoldKufam(),
+            ),
           ),
           verticalSpace(6),
-          Text(
-            'طالب ${profile.grade.name}',
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-            style: AppTextStyle.font14TextLightSemiBoldTajawal(),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerRight,
+            child: Text(
+              'طالب ${profile.grade.name}',
+              textDirection: TextDirection.rtl,
+              textAlign: TextAlign.right,
+              maxLines: 1,
+              style: AppTextStyle.font14TextLightSemiBoldTajawal(),
+            ),
           ),
         ],
       ),
@@ -74,8 +86,6 @@ class ProfileStudentCard extends StatelessWidget {
       return '؟';
     }
 
-    // Arabic letters are single UTF-16 code units, so a direct substring of
-    // the first code unit is enough for the avatar initial.
-    return trimmedName.substring(0, 1);
+    return String.fromCharCode(trimmedName.runes.first);
   }
 }
