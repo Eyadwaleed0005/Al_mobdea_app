@@ -13,6 +13,7 @@ class LessonModel extends LessonEntity {
     required super.pdfStoragePath,
     required super.pdfFileName,
     required super.pdfFileSize,
+    super.isFree = true,
     super.createdAt,
     super.updatedAt,
   });
@@ -27,6 +28,7 @@ class LessonModel extends LessonEntity {
       description: map[FirestoreFields.description] as String? ?? '',
       gradeId: map[FirestoreFields.gradeId] as String? ?? '',
       isPublished: map[FirestoreFields.isPublished] as bool? ?? false,
+      isFree: map[FirestoreFields.isFree] as bool? ?? true,
       youtubeUrl: map[FirestoreFields.youtubeUrl] as String? ?? '',
       pdfStoragePath: map[FirestoreFields.pdfStoragePath] as String? ?? '',
       pdfFileName: map[FirestoreFields.pdfFileName] as String? ?? '',
@@ -37,21 +39,38 @@ class LessonModel extends LessonEntity {
   }
 
   static int _readFileSize(Object? value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
+    if (value is int) {
+      return value;
+    }
+
+    if (value is num) {
+      return value.toInt();
+    }
+
     return 0;
   }
 
   static DateTime? _readDateTime(Object? value) {
-    if (value is Timestamp) return value.toDate().toUtc();
-    if (value is DateTime) return value.toUtc();
+    if (value is Timestamp) {
+      return value.toDate().toUtc();
+    }
+
+    if (value is DateTime) {
+      return value.toUtc();
+    }
+
     if (value is int) {
       return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true);
     }
+
     if (value is num) {
       return DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
     }
-    if (value is String) return DateTime.tryParse(value)?.toUtc();
+
+    if (value is String) {
+      return DateTime.tryParse(value)?.toUtc();
+    }
+
     return null;
   }
 }
