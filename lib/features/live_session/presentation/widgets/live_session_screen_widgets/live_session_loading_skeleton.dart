@@ -1,67 +1,86 @@
 import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer/shimmer.dart';
 
 class LiveSessionLoadingSkeleton extends StatelessWidget {
   const LiveSessionLoadingSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-          decoration: BoxDecoration(
-            color: ColorPalette.surface,
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(color: ColorPalette.border),
-          ),
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 22.h),
+        decoration: BoxDecoration(
+          color: ColorPalette.surface,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: ColorPalette.border),
+          boxShadow: [
+            BoxShadow(
+              color: ColorPalette.cardShadow.withValues(alpha: 0.07),
+              blurRadius: 18.r,
+              offset: Offset(0, 8.h),
+            ),
+          ],
+        ),
+        child: Shimmer.fromColors(
+          baseColor: const Color(0xFFE0E0E0),
+          highlightColor: const Color(0xFFF5F5F5),
+          direction: ShimmerDirection.rtl,
+          period: const Duration(milliseconds: 1400),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
                 textDirection: TextDirection.rtl,
                 children: [
-                  const Expanded(child: _SkeletonBar(width: 176, height: 25)),
-                  horizontalSpace(14),
-                  const _SkeletonBar(width: 76, height: 32, radius: 22),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: _SkeletonBar(width: 176.w, height: 25.h),
+                    ),
+                  ),
+                  horizontalSpace(12),
+                  _SkeletonBar(width: 76.w, height: 32.h, radius: 22.r),
                 ],
               ),
-              verticalSpace(14),
-              const _SkeletonBar(width: 230, height: 16),
-              verticalSpace(30),
-              const _SkeletonBar(width: double.infinity, height: 60, radius: 16),
+              verticalSpace(12),
+              FractionallySizedBox(
+                widthFactor: 0.85,
+                alignment: Alignment.centerRight,
+                child: _SkeletonBar(height: 16.h),
+              ),
+              verticalSpace(28),
+              _SkeletonBar(height: 60.h, radius: 16.r),
             ],
           ),
-        )
-        .animate(onPlay: (controller) => controller.repeat())
-        .shimmer(
-          duration: 1400.ms,
-          color: ColorPalette.wine50.withValues(alpha: 0.8),
-        );
+        ),
+      ),
+    );
   }
 }
 
 class _SkeletonBar extends StatelessWidget {
-  const _SkeletonBar({
-    required this.width,
-    required this.height,
-    this.radius = 6,
-  });
+  const _SkeletonBar({required this.height, this.width, this.radius});
 
-  final double width;
+  final double? width;
   final double height;
-  final double radius;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width == double.infinity ? null : width.w,
-      height: height.h,
-      decoration: BoxDecoration(
-        color: ColorPalette.wine50,
-        borderRadius: BorderRadius.circular(radius.r),
+    return SizedBox(
+      width: width,
+      height: height,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(radius ?? 6.r),
+        ),
       ),
     );
   }

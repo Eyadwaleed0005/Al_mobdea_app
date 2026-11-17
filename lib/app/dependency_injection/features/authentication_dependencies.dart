@@ -5,16 +5,22 @@ import 'package:al_mobdea/features/authentication/data/data_source/cache/logout_
 import 'package:al_mobdea/features/authentication/data/data_source/cache/secure_login_local_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/remote/firebase_login_remote_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/remote/firebase_logout_remote_data_source.dart';
+import 'package:al_mobdea/features/authentication/data/data_source/remote/firebase_register_remote_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/remote/login_remote_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/data_source/remote/logout_remote_data_source.dart';
+import 'package:al_mobdea/features/authentication/data/data_source/remote/register_remote_data_source.dart';
 import 'package:al_mobdea/features/authentication/data/repositories/login_repo_impl.dart';
 import 'package:al_mobdea/features/authentication/data/repositories/logout_repository_impl.dart';
+import 'package:al_mobdea/features/authentication/data/repositories/register_student_repository_impl.dart';
 import 'package:al_mobdea/features/authentication/domain/repositories/login_repo.dart';
 import 'package:al_mobdea/features/authentication/domain/repositories/logout_repository.dart';
+import 'package:al_mobdea/features/authentication/domain/repositories/register_student_repository.dart';
 import 'package:al_mobdea/features/authentication/domain/usecase/login_usecase.dart';
 import 'package:al_mobdea/features/authentication/domain/usecase/logout_usecase.dart';
+import 'package:al_mobdea/features/authentication/domain/usecase/register_student_use_case.dart';
 import 'package:al_mobdea/features/authentication/presentation/cubit/login_cubit/login_cubit.dart';
 import 'package:al_mobdea/features/authentication/presentation/cubit/logout_cubit/logout_cubit.dart';
+import 'package:al_mobdea/features/authentication/presentation/cubit/register_cubit/register_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
@@ -47,6 +53,14 @@ void _registerRemoteDataSources(GetIt getIt) {
       firestoreService: getIt<FirestoreService>(),
     );
   });
+
+  getIt.registerLazySingleton<RegisterRemoteDataSource>(() {
+    return FirebaseRegisterRemoteDataSource(
+      firebaseAuth: getIt<FirebaseAuth>(),
+      firestoreService: getIt<FirestoreService>(),
+      loginLocalDataSource: getIt<LoginLocalDataSource>(),
+    );
+  });
 }
 
 void _registerRepositories(GetIt getIt) {
@@ -60,6 +74,12 @@ void _registerRepositories(GetIt getIt) {
       localDataSource: getIt<LogoutLocalDataSource>(),
     ),
   );
+
+  getIt.registerLazySingleton<RegisterStudentRepository>(
+    () => RegisterStudentRepositoryImpl(
+      remoteDataSource: getIt<RegisterRemoteDataSource>(),
+    ),
+  );
 }
 
 void _registerUseCases(GetIt getIt) {
@@ -68,10 +88,20 @@ void _registerUseCases(GetIt getIt) {
   getIt.registerLazySingleton<LogoutUseCase>(
     () => LogoutUseCase(repository: getIt<LogoutRepository>()),
   );
+
+  getIt.registerLazySingleton<RegisterStudentUseCase>(
+    () =>
+        RegisterStudentUseCase(repository: getIt<RegisterStudentRepository>()),
+  );
 }
 
 void _registerCubits(GetIt getIt) {
   getIt.registerFactory<LoginCubit>(() => LoginCubit(loginUseCase: getIt<LoginUseCase>()));
 
   getIt.registerFactory<LogoutCubit>(() => LogoutCubit(logoutUseCase: getIt<LogoutUseCase>()));
+
+  getIt.registerFactory<RegisterCubit>(
+    () =>
+        RegisterCubit(registerStudentUseCase: getIt<RegisterStudentUseCase>()),
+  );
 }

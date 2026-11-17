@@ -19,18 +19,30 @@ final class LessonsEmpty extends LessonsState {
 
 final class LessonsFailure extends LessonsState {
   const LessonsFailure({required this.error});
+
   final AppErrorModel error;
 }
 
 final class LessonsDataSuccess extends LessonsState {
-  const LessonsDataSuccess({required this.lessons, this.query = ''});
+  const LessonsDataSuccess({
+    required this.lessons,
+    this.query = '',
+    this.showFree = true,
+    this.hasValidSubscription,
+    this.subscriptionError,
+  });
 
   final List<LessonEntity> lessons;
   final String query;
+  final bool showFree;
+  final bool? hasValidSubscription;
+  final AppErrorModel? subscriptionError;
 
   int get lessonsCount => lessons.length;
 
   bool get hasActiveQuery => query.trim().isNotEmpty;
 
   bool get hasNoResults => hasActiveQuery && lessons.isEmpty;
+
+  bool get isSelectedSectionEmpty => !hasActiveQuery && lessons.isEmpty;
 }

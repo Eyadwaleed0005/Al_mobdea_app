@@ -585,4 +585,13 @@ class AppTextStyle {
       color: ColorPalette.textPrimary,
     );
   }
+
+  static TextStyle font26PageTitleBoldKufam() {
+    return TextStyle(
+      fontSize: 26.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: kufam,
+      color: ColorPalette.highlight,
+    );
+  }
 }

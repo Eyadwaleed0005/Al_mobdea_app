@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:al_mobdea/core/connection/cubit/network_status_cubit.dart';
 import 'package:al_mobdea/core/connection/cubit/network_status_state.dart';
-import 'package:al_mobdea/core/helper/spacer.dart';
 import 'package:al_mobdea/core/style/app_color.dart';
 import 'package:al_mobdea/core/style/textstyles.dart';
 import 'package:al_mobdea/core/widgets/app_loading_indicator.dart';
+import 'package:al_mobdea/core/widgets/custom_operation_result_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+
+import 'lesson_video_fullscreen_page.dart';
 
 class LessonVideoCard extends StatefulWidget {
   const LessonVideoCard({super.key, required this.videoUrl});
@@ -23,318 +25,280 @@ class LessonVideoCard extends StatefulWidget {
 }
 
 class _LessonVideoCardState extends State<LessonVideoCard> {
-  static const double _aspectRatio = 350 / 218;
+  static const double _cardAspectRatio = 350 / 170;
 
-  YoutubePlayerController? _controller;
-
-  bool _isPlayerActive = false;
   bool _isCheckingConnection = false;
-  bool _isOfflineMessageVisible = false;
+  bool _isOpeningVideo = false;
+  bool _isOfflineDialogVisible = false;
+  int _activationGeneration = 0;
 
   @override
   void didUpdateWidget(covariant LessonVideoCard oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.videoUrl != widget.videoUrl) {
-      _closePlayer();
-      _restorePortraitOrientation();
+      _activationGeneration++;
+      _isCheckingConnection = false;
     }
   }
 
   @override
   void dispose() {
-    _closePlayer();
-    _restorePortraitOrientation();
-
+    _activationGeneration++;
     super.dispose();
   }
 
   Future<void> _activatePlayer() async {
-    if (_isPlayerActive || _isCheckingConnection || _isOfflineMessageVisible) {
-      return;
-    }
+    if (_isOpeningVideo || _isOfflineDialogVisible) return;
 
-    final String? videoId = _extractVideoId(widget.videoUrl);
+    final videoId = _extractVideoId(widget.videoUrl);
+    if (videoId == null) return;
 
-    if (videoId == null) {
-      return;
-    }
+    final generation = ++_activationGeneration;
+    bool changedOrientation = false;
+    bool shouldRetry = false;
+    bool failed = false;
 
-    _isCheckingConnection = true;
+    setState(() {
+      _isOpeningVideo = true;
+      _isCheckingConnection = true;
+    });
 
     try {
-      final bool hasInternet = await _checkInternetConnection();
+      final hasInternet = await _checkInternetConnection();
+      if (!mounted || generation != _activationGeneration) return;
 
-      if (!mounted) {
-        return;
-      }
+      setState(() {
+        _isCheckingConnection = false;
+      });
 
       if (!hasInternet) {
-        _showOfflineSnackBar();
-        return;
-      }
+        shouldRetry = await _showOfflineDialog();
+      } else {
+        changedOrientation = true;
+        await SystemChrome.setPreferredOrientations(const [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
 
-      _createPlayer(videoId);
+        if (!mounted || generation != _activationGeneration) return;
+
+        await Navigator.of(context, rootNavigator: true).push<void>(
+          MaterialPageRoute<void>(
+            builder: (_) => LessonVideoFullscreenPage(videoId: videoId),
+          ),
+        );
+      }
     } catch (_) {
-      _showPlaybackError();
+      failed = true;
     } finally {
-      _isCheckingConnection = false;
+      try {
+        if (changedOrientation) {
+          await SystemChrome.setPreferredOrientations(const [
+            DeviceOrientation.portraitUp,
+          ]);
+        }
+      } catch (_) {
+        failed = true;
+      } finally {
+        _isOpeningVideo = false;
+        if (mounted) {
+          setState(() {
+            _isCheckingConnection = false;
+          });
+        }
+      }
+    }
+
+    if (!mounted || generation != _activationGeneration) return;
+
+    if (failed) {
+      await _showPlaybackErrorDialog();
+    } else if (shouldRetry) {
+      unawaited(_activatePlayer());
     }
   }
 
   Future<bool> _checkInternetConnection() async {
-    final NetworkStatusCubit networkStatusCubit = context
-        .read<NetworkStatusCubit>();
-
-    await networkStatusCubit.checkConnection();
-
-    if (!mounted) {
-      return false;
-    }
-
-    return networkStatusCubit.state is NetworkStatusConnected;
+    final cubit = context.read<NetworkStatusCubit>();
+    await cubit.checkConnection();
+    if (!mounted) return false;
+    return cubit.state is NetworkStatusConnected;
   }
 
-  void _createPlayer(String videoId) {
-    final YoutubePlayerController controller =
-        YoutubePlayerController.fromVideoId(
-          videoId: videoId,
-          autoPlay: true,
-          params: const YoutubePlayerParams(
-            interfaceLanguage: 'ar',
-            captionLanguage: 'ar',
-            playsInline: true,
-            enableCaption: false,
-            strictRelatedVideos: true,
-          ),
-        );
+  Future<bool> _showOfflineDialog() async {
+    if (!mounted || _isOfflineDialogVisible) return false;
+    _isOfflineDialogVisible = true;
 
-    controller.setFullScreenListener(_handleFullScreenChanged);
-
-    if (!mounted) {
-      unawaited(controller.close());
-      return;
-    }
-
-    setState(() {
-      _controller = controller;
-      _isPlayerActive = true;
-    });
-  }
-
-  void _handleFullScreenChanged(bool isFullScreen) {
-    if (isFullScreen) {
-      unawaited(
-        SystemChrome.setPreferredOrientations(const [
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ]),
+    try {
+      final shouldRetry = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) {
+          return CustomOperationResultDialog(
+            type: CustomOperationResultType.failure,
+            title: 'لا يوجد اتصال بالإنترنت',
+            message: 'تحقق من اتصالك بالإنترنت ثم اضغط على إعادة المحاولة لتشغيل الفيديو.',
+            actionText: 'إعادة المحاولة',
+            secondaryActionText: 'إلغاء',
+            failureIcon: Icons.wifi_off_rounded,
+            onActionPressed: () => Navigator.of(dialogContext).pop(true),
+            onSecondaryActionPressed: () => Navigator.of(dialogContext).pop(false),
+          );
+        },
       );
-      return;
-    }
-
-    _restorePortraitOrientation();
-  }
-
-  void _restorePortraitOrientation() {
-    unawaited(
-      SystemChrome.setPreferredOrientations(const [
-        DeviceOrientation.portraitUp,
-      ]),
-    );
-  }
-
-  void _closePlayer() {
-    final YoutubePlayerController? controller = _controller;
-
-    _controller = null;
-    _isPlayerActive = false;
-
-    if (controller != null) {
-      unawaited(controller.close());
+      return shouldRetry == true;
+    } finally {
+      _isOfflineDialogVisible = false;
     }
   }
 
-  void _showOfflineSnackBar() {
-    if (!mounted || _isOfflineMessageVisible) {
-      return;
-    }
+  Future<void> _showPlaybackErrorDialog() async {
+    if (!mounted) return;
 
-    _isOfflineMessageVisible = true;
-
-    unawaited(
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-            SnackBar(
-              content: Text(
-                'لتشغيل الفيديو، تحقق من اتصال الإنترنت',
-                style: AppTextStyle.font14TextLightSemiBoldTajawal(),
-              ),
-              action: SnackBarAction(
-                label: 'إعادة المحاولة',
-                onPressed: () {
-                  _isOfflineMessageVisible = false;
-                  unawaited(_activatePlayer());
-                },
-              ),
-            ),
-          )
-          .closed
-          .then<void>((_) {
-            _isOfflineMessageVisible = false;
-          }),
-    );
-  }
-
-  void _showPlaybackError() {
-    if (!mounted) {
-      return;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'تعذر تشغيل الفيديو، حاول مرة أخرى',
-          style: AppTextStyle.font14TextLightSemiBoldTajawal(),
-        ),
-      ),
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return CustomOperationResultDialog(
+          type: CustomOperationResultType.failure,
+          title: 'تعذّر تشغيل الفيديو',
+          message: 'حدث خطأ أثناء تجهيز الفيديو، حاول مرة أخرى.',
+          actionText: 'حسنًا',
+          onActionPressed: () => Navigator.of(dialogContext).pop(),
+        );
+      },
     );
   }
 
   String? _extractVideoId(String videoUrl) {
-    final String normalizedUrl = videoUrl.trim();
+    final normalizedUrl = videoUrl.trim();
+    if (normalizedUrl.isEmpty) return null;
 
-    if (normalizedUrl.isEmpty) {
-      return null;
+    final convertedId = YoutubePlayerController.convertUrlToId(normalizedUrl);
+    if (convertedId != null && convertedId.trim().isNotEmpty) {
+      return convertedId.trim();
     }
 
-    final String? convertedVideoId = YoutubePlayerController.convertUrlToId(
-      normalizedUrl,
-    );
-
-    if (convertedVideoId != null && convertedVideoId.trim().isNotEmpty) {
-      return convertedVideoId.trim();
-    }
-
-    final bool isRawVideoId = RegExp(r'^[a-zA-Z0-9_-]{11}$')
-        .hasMatch(normalizedUrl);
-
-    return isRawVideoId ? normalizedUrl : null;
+    return RegExp(r'^[a-zA-Z0-9_-]{11}$').hasMatch(normalizedUrl)
+        ? normalizedUrl
+        : null;
   }
 
   @override
   Widget build(BuildContext context) {
-    final String? videoId = _extractVideoId(widget.videoUrl);
+    final videoId = _extractVideoId(widget.videoUrl);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24.r),
-      child: AspectRatio(
-        aspectRatio: _aspectRatio,
-        child: _buildContent(videoId),
+    return AspectRatio(
+      aspectRatio: _cardAspectRatio,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18.r),
+        child: videoId == null
+            ? _buildInvalidVideoView()
+            : _buildThumbnailPreview(videoId),
       ),
     );
   }
 
-  Widget _buildContent(String? videoId) {
-    if (videoId == null) {
-      return _buildInvalidVideoView();
-    }
+  Widget _buildThumbnailPreview(String videoId) {
+    final isBusy = _isOpeningVideo || _isCheckingConnection;
 
-    if (_isPlayerActive && _controller != null) {
-      return _buildPlayer();
-    }
-
-    return _buildPreview(videoId);
-  }
-
-  String _thumbnailUrl(String videoId) {
-    return 'https://img.youtube.com/vi/$videoId/hqdefault.jpg';
-  }
-
-  Widget _buildPreview(String videoId) {
-    return GestureDetector(
-      key: const ValueKey<String>('video-thumbnail'),
-      onTap: _activatePlayer,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          CachedNetworkImage(
-            imageUrl: _thumbnailUrl(videoId),
-            fit: BoxFit.cover,
-            placeholder: (context, imageUrl) {
-              return const ColoredBox(
-                color: ColorPalette.deepSurface,
-                child: Center(
-                  child: AppLoadingIndicator(
-                    color: ColorPalette.primary,
-                    size: 30,
-                    strokeWidth: 3,
-                    wavelength: 14,
-                    waveSpeed: 10,
-                  ),
-                ),
-              );
-            },
-            errorWidget: (context, imageUrl, error) {
-              return const ColoredBox(color: ColorPalette.deepSurface);
-            },
-          ),
-          Center(
-            child: Container(
-              width: 62.w,
-              height: 62.w,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: ColorPalette.gold200,
+    return Semantics(
+      button: true,
+      enabled: !isBusy,
+      label: 'تشغيل فيديو الدرس بملء الشاشة',
+      child: GestureDetector(
+        onTap: isBusy ? null : _activatePlayer,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            CachedNetworkImage(
+              imageUrl: 'https://img.youtube.com/vi/$videoId/hqdefault.jpg',
+              fit: BoxFit.cover,
+              placeholder: (context, imageUrl) => const ColoredBox(
+                color: ColorPalette.primarySoftBackground,
               ),
-              child: Icon(
-                Icons.play_arrow_rounded,
-                size: 38.sp,
-                color: ColorPalette.wine700,
+              errorWidget: (context, imageUrl, error) => const ColoredBox(
+                color: ColorPalette.primarySoftBackground,
               ),
             ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0),
+                    Colors.black.withValues(alpha: 0.38),
+                  ],
+                ),
+              ),
+            ),
+            Center(
+              child: _isCheckingConnection
+                  ? _buildLoadingIndicator()
+                  : _buildPlayButton(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Container(
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.54),
+        shape: BoxShape.circle,
+      ),
+      child: const AppLoadingIndicator(
+        color: ColorPalette.textLight,
+        size: 30,
+        strokeWidth: 3,
+        wavelength: 14,
+        waveSpeed: 10,
+      ),
+    );
+  }
+
+  Widget _buildPlayButton() {
+    return Container(
+      padding: EdgeInsets.all(10.w),
+      decoration: BoxDecoration(
+        color: ColorPalette.primary,
+        shape: BoxShape.circle,
+        border: Border.all(color: ColorPalette.gold200, width: 3.w),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 12.r,
+            offset: Offset(0, 4.h),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildPlayer() {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        colorScheme: Theme.of(context).colorScheme
-            .copyWith(primary: ColorPalette.primary),
-      ),
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: YoutubePlayer(
-          controller: _controller!,
-          aspectRatio: _aspectRatio,
-          backgroundColor: ColorPalette.deepSurface,
-          autoFullScreen: false,
-          enableFullScreenOnVerticalDrag: false,
-        ),
+      child: Icon(
+        Icons.play_arrow_rounded,
+        size: 40.sp,
+        color: ColorPalette.textLight,
       ),
     );
   }
 
   Widget _buildInvalidVideoView() {
     return ColoredBox(
-      color: ColorPalette.deepSurface,
+      color: ColorPalette.primarySoftBackground,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.video_library_outlined,
-              size: 34.sp,
-              color: ColorPalette.gold200,
+              size: 40.sp,
+              color: ColorPalette.primary,
             ),
-            verticalSpace(8),
+            SizedBox(height: 8.h),
             Text(
               'رابط الفيديو غير صالح',
-              textDirection: TextDirection.rtl,
-              style: AppTextStyle.font14TextLightSemiBoldTajawal(),
+              style: AppTextStyle.font14PrimaryMediumTajawal(),
             ),
           ],
         ),
