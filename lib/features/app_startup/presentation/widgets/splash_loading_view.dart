@@ -22,7 +22,11 @@ class SplashLoadingView extends StatelessWidget {
             const Spacer(flex: 3),
 
             AppAnimations.logoZoomInEntrance(
-              child: Image.asset(AppImage().splashLogo, width: 260.w, fit: BoxFit.contain),
+              child: Image.asset(
+                AppImage().splashLogo,
+                width: 260.w,
+                fit: BoxFit.contain,
+              ),
             ),
 
             verticalSpace(20),
@@ -37,7 +41,7 @@ class SplashLoadingView extends StatelessWidget {
 
             AppAnimations.splashSubtitle(
               child: SplashTitleText(
-                text: 'معلم أول لغة عربية',
+                text: ' معلم خبير لغه عربيه ',
                 style: AppTextStyle.font16TextLightMediumTajawal(),
               ),
             ),
@@ -49,9 +53,8 @@ class SplashLoadingView extends StatelessWidget {
             AppAnimations.splashLoadingText(
               child: SplashTitleText(
                 text: 'طريقك إلى اللغة العربية',
-                style: AppTextStyle.font14TextSecondaryRegularTajawal().copyWith(
-                  color: ColorPalette.cream300,
-                ),
+                style: AppTextStyle.font14TextSecondaryRegularTajawal()
+                    .copyWith(color: ColorPalette.cream300),
               ),
             ),
 
